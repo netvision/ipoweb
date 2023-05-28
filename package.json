@@ -1,11 +1,11 @@
 {
-	"name": "@zynth/vitailse",
-	"description": "Vite starter template with TailwindCSS",
+	"name": "ipoinbox",
+	"description": "Unboxing the treasure of IPOs",
 	"version": "0.1.0",
 	"main": "src/main.ts",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/zynth17/vitailse.git"
+		"url": "git+https://github.com/netvision/ipoweb.git"
 	},
 	"keywords": [
 		"vitailse",
@@ -13,12 +13,12 @@
 		"vite",
 		"vitesse"
 	],
-	"author": "Christopher Reeeve",
+	"author": "Rakesh Jangid",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/zynth17/vitailse/issues"
 	},
-	"homepage": "https://github.com/zynth17/vitailse#readme",
+	"homepage": "https://github.com/netvision/ipoweb",
 	"scripts": {
 		"dev": "vite",
 		"build": "vite-ssg build",
@@ -34,6 +34,9 @@
 		"@vueuse/core": "^8.9.3",
 		"@vueuse/head": "^0.7.6",
 		"autoprefixer": "^10.4.7",
+		"axios": "^1.4.0",
+		"flowbite": "^1.6.5",
+		"flowbite-vue": "^0.0.10",
 		"pinia": "^2.0.16",
 		"postcss": "^8.4.14",
 		"tailwindcss": "^3.1.6",
