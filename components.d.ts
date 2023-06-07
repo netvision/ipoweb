@@ -8,6 +8,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
+    CompClients: typeof import('./src/components/CompClients.vue')['default']
+    CompHistory: typeof import('./src/components/CompHistory.vue')['default']
+    CompHoldings: typeof import('./src/components/CompHoldings.vue')['default']
+    CompInfo: typeof import('./src/components/CompInfo.vue')['default']
     'Icon:bx:bxMoon': typeof import('~icons/bx/bx-moon')['default']
     'Icon:bx:bxsMoon': typeof import('~icons/bx/bxs-moon')['default']
     'IconAkarIcons:githubFill': typeof import('~icons/akar-icons/github-fill')['default']
