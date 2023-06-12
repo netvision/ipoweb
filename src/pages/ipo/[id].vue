@@ -24,6 +24,8 @@ const formatDate = (d) => {
     return new Intl.DateTimeFormat('default', {dateStyle: 'long'}).format(date);
 }
 
+const minInvstment = ref({})
+
 const amtInCr = (amt) => {
 	const croresValue = amt / 10000000;
 
@@ -35,8 +37,30 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
-	events.value = await axios.get('https://droplet.netserve.in/comp-history?filter[ipoId][eq]='+ipoId.value).then(r => r.data)
-	console.log(events.value)
+	if(ipo.value.ipo_type != 'SME'){
+		let amt = ipo.value.lot_size * ipo.value.price_band_high
+		minInvstment.value = [
+			{
+				category: 'Retail',
+				lots: 1,
+				shares: ipo.value.lot_size,
+				amt: amt
+			},
+			{
+				category: 'sHNI',
+				lots: Math.ceil(200000 / amt),
+				shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
+				amt:  Math.ceil(200000 / amt) * amt,
+			},
+			{
+				category: 'bHNI',
+				lots: Math.ceil(1000000 / amt),
+				shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
+				amt:  Math.ceil(1000000 / amt) * amt,
+			}
+		]
+		console.log(minInvstment.value)
+	}
 })
 </script>
 <template>
@@ -106,7 +130,15 @@ onMounted(async() => {
 					</ul>
 				</div>
 				<div class="bg-orange-200 p-3">
-					test
+					<div v-if="minInvstment.length > 0">
+						<h3 class="font-semibold text-lg m-2">Minimum Investment</h3>
+						<ul class="divide-y divide-dashed">
+							<li v-for="(inv, i) in minInvstment" :key="i" class="border-b-1 border-orange-400 py-2">
+								<h4 class="font-semibold mt-2">{{ inv.category }}</h4>
+								<p>{{ inv.lots }} Lots ({{ inv.shares }} Shares) @ &#8377;{{ inv.amt }}</p>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -116,6 +148,12 @@ onMounted(async() => {
 	</div>
 	<div v-else>
 		<CompInfo :id="ipoId" />
+	</div>
+	<div>
+		<Promoters :id="ipoId" />
+	</div>
+	<div>
+		<IpoObjects :id="ipoId" />
 	</div>
 </template>
 <style scoped>

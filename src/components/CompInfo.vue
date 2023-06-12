@@ -61,6 +61,11 @@ const formatDate = (d) => {
 				<div v-if="compInfo[0].client_note">{{ compInfo[0].client_note }}</div>
 
 				<CompHoldings :id="props.id" />
+				<div v-if="compInfo[0].holding_note">{{ compInfo[0].holding_note }}</div>
+
+				<CompProperties :id="props.id" :note="compInfo[0].property_note" />
+
+				<CompLitigations :id="props.id" :note="compInfo[0].property_note" />
 			</div>
 		</div>
 	</div>
