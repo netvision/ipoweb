@@ -10,9 +10,9 @@ import Logo from '@/assets/logo.png';
       <template #default="{isShowMenu}">
         <NavbarCollapse :isShowMenu="isShowMenu">
           <NavbarLink isActive link="#">Home</NavbarLink>
-          <NavbarLink link="#">Services</NavbarLink>
-          <NavbarLink link="#">Pricing</NavbarLink>
-          <NavbarLink link="#">Contact</NavbarLink>
+          <NavbarLink link="#">Retail Investors</NavbarLink>
+          <NavbarLink link="#">HNI Investors</NavbarLink>
+          <NavbarLink link="#">FAQ</NavbarLink>
         </NavbarCollapse>
       </template>
     </Navbar>

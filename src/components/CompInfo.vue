@@ -1,7 +1,6 @@
 <script setup>
 import axios from 'axios';
-import CompHistory from './CompHistory.vue';
-
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 const props = defineProps(['id'])
 const compInfo = ref()
 const getInfo = async() => {
@@ -19,7 +18,12 @@ const formatDate = (d) => {
 </script>
 <template>
 	<div v-if="compInfo">
-		<h3 class="text-2xl font-sans font-bold">Company Information</h3>
+
+		<Accordion>
+    <accordion-panel>
+      <accordion-header class="text-2xl">Company Information</accordion-header>
+      <accordion-content>
+        <h3 class="text-2xl font-sans font-bold">Company Information</h3>
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<div>
 				<div class="m-3 shadow-dark-300">
@@ -50,6 +54,9 @@ const formatDate = (d) => {
 					<p>{{ compInfo[0].corp_office_city }}<span v-if="compInfo[0].corp_office_pin"> - {{ compInfo[0].reg_office_pin }}</span></p>
 					<p>{{ compInfo[0].corp_office_state }}</p>
 				</div>
+				<div>
+					<IpoObjects :id="props.id" />
+				</div>
 			</div>
 			<div class="col-span-2">
 				<h3 class="text-xl font-sans font-bold">Brief Intro</h3>
@@ -68,6 +75,12 @@ const formatDate = (d) => {
 				<CompLitigations :id="props.id" :note="compInfo[0].property_note" />
 			</div>
 		</div>
+      </accordion-content>
+    </accordion-panel>
+
+  </Accordion>
+
+
 	</div>
 </template>
 <style>

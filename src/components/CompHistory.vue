@@ -24,7 +24,7 @@ const getEvents = async() => {
 getEvents()
 </script>
 <template>
-	<div class="p-6 h-auto max-h-80 scroll-my-2 overflow-scroll">
+	<div class="p-6 h-auto max-h-80 scroll-my-2 overflow-y-auto">
 
 		<ol class="border-l-2 border-info-100" v-if="events">
 			<li v-for="(evt, k) in events" :key="k">

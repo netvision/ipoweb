@@ -1,13 +1,9 @@
 <script setup>
 import axios from 'axios';
-import CompInfo from '@/components/CompInfo.vue'
-import Topbar from '@/components/Topbar.vue';
-import { useRoute } from 'vue-router'
-import { defineAsyncComponent } from 'vue'
 
-const CompHistory = defineAsyncComponent(() =>
-  import('@/components/CompHistory.vue')
-)
+import { useRoute } from 'vue-router'
+
+
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
@@ -37,6 +33,7 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
+	console.log(ipo.value)
 	if(ipo.value.ipo_type != 'SME'){
 		let amt = ipo.value.lot_size * ipo.value.price_band_high
 		minInvstment.value = [
@@ -59,7 +56,6 @@ onMounted(async() => {
 				amt:  Math.ceil(1000000 / amt) * amt,
 			}
 		]
-		console.log(minInvstment.value)
 	}
 })
 </script>
@@ -152,8 +148,14 @@ onMounted(async() => {
 	<div>
 		<Promoters :id="ipoId" />
 	</div>
-	<div>
-		<IpoObjects :id="ipoId" />
+	<div v-if="ipo.financials">
+		<CompFinancials :content="JSON.parse(ipo.financials)" />
+	</div>
+	<div v-if="ipo.peers">
+		<CompPeers :content="JSON.parse(ipo.peers)" />
+	</div>
+	<div v-if="ipo.swot">
+		<compSwot :content="JSON.parse(ipo.swot)" />
 	</div>
 </template>
 <style scoped>
