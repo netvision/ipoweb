@@ -1,8 +1,11 @@
 <script setup>
+	import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 	const props = defineProps(['content'])
 </script>
 <template>
-	<div>
+	<accordion-panel>
+      <accordion-header class="text-2xl">Company Financials</accordion-header>
+      <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">Company Financials</h3>
 		<div class="grid gap-4 text-center md:grid-cols-2 items-stretch lg:gap-12 px-8">
 			<div>
@@ -37,6 +40,6 @@
 			</div>
 		</div>
 		<div v-if="props.content" class="editor" v-html="props.content.html_note"></div>
-
-	</div>
+		</accordion-content>
+		</accordion-panel>
 </template>

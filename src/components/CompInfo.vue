@@ -17,10 +17,7 @@ const formatDate = (d) => {
 }
 </script>
 <template>
-	<div v-if="compInfo">
-
-		<Accordion>
-    <accordion-panel>
+    <accordion-panel v-if="compInfo">
       <accordion-header class="text-2xl">Company Information</accordion-header>
       <accordion-content>
         <h3 class="text-2xl font-sans font-bold">Company Information</h3>
@@ -78,10 +75,6 @@ const formatDate = (d) => {
       </accordion-content>
     </accordion-panel>
 
-  </Accordion>
-
-
-	</div>
 </template>
 <style>
 .editor ol {

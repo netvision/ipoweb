@@ -1,10 +1,13 @@
 <script setup>
+	import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 	const props = defineProps(['content'])
 
 
 </script>
 <template>
-	<div class="pr-4">
+	<accordion-panel>
+      <accordion-header class="text-2xl">Peers Comparision</accordion-header>
+      <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">Peers Comparision</h3>
 		<table class="peers table-fixed w-auto border mx-8" v-if="props.content && props.content.row.length > 0">
 			<thead class="bg-gray-200">
@@ -19,7 +22,8 @@
 			</tbody>
 		</table>
 		<div class="editor" v-html="props.content.htmlNotes" />
-	</div>
+	</accordion-content>
+	</accordion-panel>
 </template>
 <style>
 

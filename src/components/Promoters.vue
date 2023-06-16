@@ -1,7 +1,9 @@
 <script setup>
 import axios from 'axios';
+import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 
 const props = defineProps(['id'])
+
 
 const promoters = ref([])
 const holdings = ref([])
@@ -36,6 +38,9 @@ getPromoters()
 
 </script>
 <template>
+	 <accordion-panel v-if="promoters && promoters.length > 0">
+      <accordion-header class="text-2xl">Promoters</accordion-header>
+      <accordion-content>
 	<h3 class="text-2xl font-sans font-bold m-4 p-4">Promoters</h3>
 	<div v-if="promoters && promoters.length > 0" class="grid gap-4 text-center md:grid-cols-3 items-stretch lg:gap-12 px-8">
 		<div v-for="(promoter, i) in promoters" :key="i"
@@ -87,4 +92,6 @@ getPromoters()
                 </tbody>
             </table>
 	</div>
+	</accordion-content>
+	</accordion-panel>
 </template>

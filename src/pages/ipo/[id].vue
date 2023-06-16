@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { useRoute } from 'vue-router'
 
-
+import { Accordion } from 'flowbite-vue';
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
@@ -143,19 +143,13 @@ onMounted(async() => {
 		<div class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
 	</div>
 	<div v-else>
+	<Accordion>
 		<CompInfo :id="ipoId" />
-	</div>
-	<div>
 		<Promoters :id="ipoId" />
-	</div>
-	<div v-if="ipo.financials">
-		<CompFinancials :content="JSON.parse(ipo.financials)" />
-	</div>
-	<div v-if="ipo.peers">
-		<CompPeers :content="JSON.parse(ipo.peers)" />
-	</div>
-	<div v-if="ipo.swot">
-		<compSwot :content="JSON.parse(ipo.swot)" />
+		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
+		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
+		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
+	</Accordion>
 	</div>
 </template>
 <style scoped>
