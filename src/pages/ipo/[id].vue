@@ -3,12 +3,13 @@ import axios from 'axios';
 
 import { useRoute } from 'vue-router'
 
-import { Accordion } from 'flowbite-vue';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue';
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
 const title = ref(route.params.id.split('-')[1])
 const events = ref([])
+const total = ref(0)
 useHead({
 	title: title.value
 })
@@ -57,6 +58,9 @@ onMounted(async() => {
 			}
 		]
 	}
+
+	total.value = Number(ipo.value.fresh_issue ?? 0) + Number(ipo.value.offer_for_sale ?? 0)
+
 })
 </script>
 <template>
@@ -139,18 +143,61 @@ onMounted(async() => {
 			</div>
 		</div>
  	</div>
-	<div v-if="ipo.about_html">
-		<div class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
+	 <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 m-3">
+		<div class="border-r md:border-r-0 bg-orange-200 p-3">
+			<IpoObjects :id="ipoId" />
+		</div>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3">
+			<h3>Tentative Schedule</h3>
+			<ul class="divide-y divide-dashed">
+				<li class="border-b-1 border-orange-400 py-2">
+					<h4 class="font-semibold mt-2">Finalisation of Basis of Allotment</h4>
+					<p v-if="ipo.t_finalisation_of_basis">{{ formatDate(ipo.t_finalisation_of_basis) }}</p>
+				</li>
+				<li class="border-b-1 border-orange-400 py-2">
+					<h4 class="font-semibold mt-2">Unblocking of Funds</h4>
+					<p v-if="ipo.t_initiation_of_refunds">{{ formatDate(ipo.t_initiation_of_refunds) }}</p>
+				</li>
+				<li class="border-b-1 border-orange-400 py-2">
+					<h4 class="font-semibold mt-2">Credit of Equity Shares to Allottees</h4>
+					<p v-if="ipo.t_credit_of_equity_shares">{{ formatDate(ipo.t_credit_of_equity_shares) }}</p>
+				</li>
+				<li class="border-b-1 border-orange-400 py-2">
+					<h4 class="font-semibold mt-2">Commencement of Trading</h4>
+					<p v-if="ipo.t_commencement">{{ formatDate(ipo.t_commencement) }}</p>
+				</li>
+				<li class="border-b-1 border-orange-400 py-2" v-if="ipo.t_anchor_unblocking">
+					<h4 class="font-semibold mt-2">Anchors Unblocking</h4>
+					<p>{{ formatDate(ipo.t_anchor_unblocking) }}</p>
+				</li>
+				<li class="border-b-1 border-orange-400 py-2" v-if="ipo.t_anchor_unblocking_long">
+					<h4 class="font-semibold mt-2">Anchor Unblocking(3 Months)</h4>
+					<p>{{ formatDate(ipo.t_anchor_unblocking_long) }}</p>
+				</li>
+			</ul>
+		</div>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3">
+			<CatQuota :id="ipoId" :total="total" />
+		</div>
 	</div>
-	<div v-else>
+	<div>
+		<Subscriptions :id="ipoId" />
+	</div>
 	<Accordion>
-		<CompInfo :id="ipoId" />
+		<accordion-panel v-if="ipo.about_html">
+      		<accordion-header class="text-2xl">About Company</accordion-header>
+      		<accordion-content>
+				<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
+	  		</accordion-content>
+	  	</accordion-panel>
+
+		<CompInfo :id="ipoId" v-else />
 		<Promoters :id="ipoId" />
 		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
 	</Accordion>
-	</div>
+
 </template>
 <style scoped>
 h3{

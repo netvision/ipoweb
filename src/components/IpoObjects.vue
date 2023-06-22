@@ -27,7 +27,7 @@ getObjects()
      <table class="table-fixed w-full border">
              <thead class="bg-orange-200">
              	<tr class="border border-gray-400">
-     				<th class="border border-gray-400 text-left p-2">Purpose</th>
+     				<th class="border border-gray-400 text-left p-2" style="width:70%">Purpose</th>
      				<th class="border border-gray-400 p-2">Amount</th>
      			</tr>
      		</thead>

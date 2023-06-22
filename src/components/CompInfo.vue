@@ -51,9 +51,7 @@ const formatDate = (d) => {
 					<p>{{ compInfo[0].corp_office_city }}<span v-if="compInfo[0].corp_office_pin"> - {{ compInfo[0].reg_office_pin }}</span></p>
 					<p>{{ compInfo[0].corp_office_state }}</p>
 				</div>
-				<div>
-					<IpoObjects :id="props.id" />
-				</div>
+
 			</div>
 			<div class="col-span-2">
 				<h3 class="text-xl font-sans font-bold">Brief Intro</h3>
@@ -74,7 +72,6 @@ const formatDate = (d) => {
 		</div>
       </accordion-content>
     </accordion-panel>
-
 </template>
 <style>
 .editor ol {
