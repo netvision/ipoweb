@@ -8,8 +8,11 @@ const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
 const title = ref(route.params.id.split('-')[1])
-const events = ref([])
 const total = ref(0)
+const quotas = ref([])
+const subscriptions = ref([])
+const today = new Date()
+const listing_data = ref({})
 useHead({
 	title: title.value
 })
@@ -34,7 +37,6 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
-	console.log(ipo.value)
 	if(ipo.value.ipo_type != 'SME'){
 		let amt = ipo.value.lot_size * ipo.value.price_band_high
 		minInvstment.value = [
@@ -58,8 +60,50 @@ onMounted(async() => {
 			}
 		]
 	}
+	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 
-	total.value = Number(ipo.value.fresh_issue ?? 0) + Number(ipo.value.offer_for_sale ?? 0)
+	let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
+  	let net = res.reduce((acc, r) => {
+       return ([4,5,7].includes(r.cat_id)) ? acc - r.quota : acc
+    }, total)
+
+	if(res.length > 0) {
+	res.sort((a,b) => a.cat.cat_order - b.cat.cat_order)
+    quotas.value = res.filter(qt => qt.quota > 0).map(cat => {
+      let perc = (![4,5,7].includes(cat.cat_id) && net > 0) ? cat.quota * 100 / net: 0
+		return{
+			...cat,
+			perc: (perc > 0) ? perc.toFixed(2)+'%' : ''
+			}
+    	})
+  	}
+
+	  if(today >= new Date(ipo.value.open_date)){
+		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+		let subs = logs.reduce((group, item) => {
+			const key = item.day;
+			if(!group[key]){
+				group[key] = []
+			}
+			let quota = quotas.value.filter(q => q.cat_id == item.cat_id)
+			group[key].push({...item, quota: quota[0].quota})
+			return group
+		}, {})
+
+		Object.values(subs).forEach(v => {
+			if(v.filter(u => u.subscription > 0).length > 0){
+				subscriptions.value.push(v.sort((a,b) => a.cat.cat_order - b.cat.cat_order))
+			}
+		})
+	  }
+	  else console.log("Issue is not open yet")
+
+	  if(ipo.value.listings.length > 0 && ipo.value.listings[0].listing_date){
+		listing_data.value.bse = ipo.value.listings.filter(x => x.exchange === "BSE")[0]
+		listing_data.value.nse = ipo.value.listings.filter(x => x.exchange === "NSE")[0]
+
+	  }
+	  else console.log("the issue is not listed yet")
 
 })
 </script>
@@ -177,11 +221,49 @@ onMounted(async() => {
 			</ul>
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3">
-			<CatQuota :id="ipoId" :total="total" />
+			<h3 class="text-xl">Categories Quota and Discount</h3>
+			<table class="table-fixed w-full border">
+				<thead class="bg-orange-200">
+					<tr class="border border-gray-400">
+						<th class="border border-gray-400 text-left p-2">Category</th>
+						<th class="border border-gray-400 p-2">Quota</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="quota in quotas" :key="quota.id">
+						<td class="border border-gray-400 p-2">{{ quota.cat.short_name }}</td>
+						<td class="border border-gray-400 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: {{ quota.discount }}</span></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
-	<div>
-		<Subscriptions :id="ipoId" />
+	<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 m-3">
+		<div v-if="subscriptions.length > 0">
+			<div v-for="(subs, i) in subscriptions" :key="i">
+				<h3>{{ formatDate(subs[0].day) }}</h3>
+				<table class="table-fixed w-full border">
+					<thead class="bg-orange-200">
+						<tr class="border border-gray-400">
+							<th class="border border-gray-400 text-left p-2">Category</th>
+							<th class="border border-gray-400 p-2">Subscription</th>
+							<th class="border border-gray-400 p-2">Times</th>
+							<th class="border border-gray-400 p-2">Applications</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="item in subs" :key="subs.id">
+							<td class="border border-gray-400 p-2">{{ item.cat.short_name }}</td>
+							<td class="border border-gray-400 p-2">{{ item.subscription }} </td>
+							<td class="border border-gray-400 p-2">{{ (item.subscription / item.quota).toFixed(2) }}x</td>
+							<td class="border border-gray-400 p-2">{{ item.applications ?? 'NA' }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div><pre v-if="listing_data.bse">{{ listing_data.bse }}</pre></div>
+		<div><pre v-if="listing_data.nse">{{ listing_data.nse }}</pre></div>
 	</div>
 	<Accordion>
 		<accordion-panel v-if="ipo.about_html">
