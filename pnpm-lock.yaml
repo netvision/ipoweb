@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@tailwindcss/aspect-ratio':
     specifier: ^0.4.0
@@ -36,7 +40,7 @@ dependencies:
     version: 0.0.10(tailwindcss@3.1.6)(vue@3.2.37)
   pinia:
     specifier: ^2.0.16
-    version: 2.0.16(typescript@4.7.4)(vue@3.2.37)
+    version: 2.0.16(typescript@5.1.5)(vue@3.2.37)
   postcss:
     specifier: ^8.4.14
     version: 8.4.14
@@ -85,8 +89,8 @@ devDependencies:
     specifier: ^4.7.1
     version: 4.7.1
   typescript:
-    specifier: ^4.7.4
-    version: 4.7.4
+    specifier: ^5.1.5
+    version: 5.1.5
   unplugin-auto-import:
     specifier: ^0.9.3
     version: 0.9.3(@vueuse/core@8.9.3)(rollup@2.77.0)(vite@3.0.0)
@@ -122,7 +126,7 @@ devDependencies:
     version: 0.18.0
   vue-tsc:
     specifier: ^0.38.5
-    version: 0.38.5(typescript@4.7.4)
+    version: 0.38.5(typescript@5.1.5)
 
 packages:
 
@@ -3594,7 +3598,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-globals: 6.0.0
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -3660,10 +3664,6 @@ packages:
       eslint-visitor-keys: 1.3.0
       espree: 6.2.1
       semver: 6.3.0
-    dev: true
-
-  /jsonc-parser@3.1.0:
-    resolution: {integrity: sha512-DRf0QjnNeCUds3xTjKlQQ3DpJD51GvDjJfnxUVWg6PZTo2otSm+slzNAxU/35hF8/oJIKoG9slq30JYOsF2azg==}
     dev: true
 
   /jsonc-parser@3.2.0:
@@ -4118,7 +4118,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /pinia@2.0.16(typescript@4.7.4)(vue@3.2.37):
+  /pinia@2.0.16(typescript@5.1.5)(vue@3.2.37):
     resolution: {integrity: sha512-9/LMVO+/epny1NBfC77vnps4g3JRezxhhoF1xLUk8mZkUIxVnwfEAIRiAX8mYBTD/KCwZqnDMqXc8w3eU0FQGg==}
     peerDependencies:
       '@vue/composition-api': ^1.4.0
@@ -4131,7 +4131,7 @@ packages:
         optional: true
     dependencies:
       '@vue/devtools-api': 6.2.1
-      typescript: 4.7.4
+      typescript: 5.1.5
       vue: 3.2.37
       vue-demi: 0.13.4(vue@3.2.37)
     dev: false
@@ -4144,7 +4144,7 @@ packages:
   /pkg-types@0.3.3:
     resolution: {integrity: sha512-6AJcCMnjUQPQv/Wk960w0TOmjhdjbeaQJoSKWRQv9N3rgkessCu6J0Ydsog/nw1MbpnxHuPzYbfOn2KmlZO1FA==}
     dependencies:
-      jsonc-parser: 3.1.0
+      jsonc-parser: 3.2.0
       mlly: 0.5.4
       pathe: 0.3.2
     dev: true
@@ -4708,7 +4708,7 @@ packages:
   /strip-literal@0.4.0:
     resolution: {integrity: sha512-ql/sBDoJOybTKSIOWrrh8kgUEMjXMwRAkZTD0EwiwxQH/6tTPkZvMIEjp0CRlpi6V5FMiJyvxeRkEi1KrGISoA==}
     dependencies:
-      acorn: 8.7.1
+      acorn: 8.8.2
     dev: true
 
   /sucrase@3.32.0:
@@ -4949,9 +4949,9 @@ packages:
       mime-types: 2.1.35
     dev: true
 
-  /typescript@4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
-    engines: {node: '>=4.2.0'}
+  /typescript@5.1.5:
+    resolution: {integrity: sha512-FOH+WN/DQjUvN6WgW+c4Ml3yi0PH+a/8q+kNIfRehv1wLhWONedw85iu+vQ39Wp49IzTJEsZ2lyLXpBF7mkF1g==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   /ufo@1.1.2:
@@ -5401,14 +5401,14 @@ packages:
       '@vue/devtools-api': 6.2.1
       vue: 3.2.37
 
-  /vue-tsc@0.38.5(typescript@4.7.4):
+  /vue-tsc@0.38.5(typescript@5.1.5):
     resolution: {integrity: sha512-AFlqvwpENOTTJxS1Gl1uG0ZVsvtGCbgv9d0i4fXk5Pnao/ETVwWewPEsj+4cPlwa5htO9WhK6qfWwoqcCqg0yQ==}
     hasBin: true
     peerDependencies:
       typescript: '*'
     dependencies:
       '@volar/vue-typescript': 0.38.5
-      typescript: 4.7.4
+      typescript: 5.1.5
     dev: true
 
   /vue@3.2.37:
