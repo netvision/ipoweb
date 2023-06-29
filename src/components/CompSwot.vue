@@ -5,7 +5,7 @@ import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 </script>
 <template>
 	<accordion-panel>
-      <accordion-header class="text-2xl">SWOT</accordion-header>
+      <accordion-header class="text-base">SWOT</accordion-header>
       <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">SWOT</h3>
 		<div class="grid gap-4 text-center md:grid-cols-4 items-stretch lg:gap-12 px-8">

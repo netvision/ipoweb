@@ -21,8 +21,8 @@ const getObjects = async() => {
 getObjects()
 </script>
 <template>
-	<div class="bg-orange-100 mx-4">
-	<h3 class="text-2xl font-sans font-bold m-4 p-4">Objects of the IPO</h3>
+
+	<h3 class="text-xl pb-4">Objects of the IPO</h3>
 
      <table class="table-fixed w-full border">
              <thead class="bg-orange-200">
@@ -37,5 +37,5 @@ getObjects()
      			</tr>
 
      	</table>
- 	</div>
+
 </template>

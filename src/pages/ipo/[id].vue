@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { useRoute } from 'vue-router'
 
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Tabs, Tab } from 'flowbite-vue';
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
@@ -13,6 +13,7 @@ const quotas = ref([])
 const subscriptions = ref([])
 const today = new Date()
 const listing_data = ref({})
+const activeTab = ref()
 useHead({
 	title: title.value
 })
@@ -37,6 +38,7 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
+	activeTab.value = formatDate(ipo.value.open_date)
 	if(ipo.value.ipo_type != 'SME'){
 		let amt = ipo.value.lot_size * ipo.value.price_band_high
 		minInvstment.value = [
@@ -101,7 +103,9 @@ onMounted(async() => {
 	  if(ipo.value.listings.length > 0 && ipo.value.listings[0].listing_date){
 		listing_data.value.bse = ipo.value.listings.filter(x => x.exchange === "BSE")[0]
 		listing_data.value.nse = ipo.value.listings.filter(x => x.exchange === "NSE")[0]
-
+		if(listing_data.value.nse.scrip_code != null){
+			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data.priceInfo)
+		}
 	  }
 	  else console.log("the issue is not listed yet")
 
@@ -115,84 +119,53 @@ onMounted(async() => {
 				<img :src="ipo.company_logo" class="h-20 object-contain bg-white drop-shadow-lg" />
 			</div>
 		</div>
-		<div class="bg-orange-300 p-3 align-middle">
+		<div class="bg-orange-300 p-4 align-middle">
 			<h2 class="text-4xl font-bold text-orange-700 dark:text-white">{{ ipo.company_name }}
 				<span class="text-base"><sub>{{ (ipo.ipo_type == 'SME') ? 'SME' : 'IPO' }}</sub></span>
 				<span class="mb-2 p-2"><a :href="ipo.company_url" target="_blank"><svg class="inline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 30 30">
 <path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path>
-</svg></a></span>
+</svg></a></span><span v-if="listing_data.nse && listing_data.nse.scrip_code != null">&#8377; {{ listing_data.nse?.live?.lastPrice }}</span>
 			</h2>
 		</div>
-		<div class="bg-orange-200 pl-4">
-			<h3><span v-if="ipo.registrar">Registrar: <a :href="ipo.registrar.url" target="_blank">{{ ipo.registrar.name }}</a></span><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.rhp_url" target="_blank">Offer Document</a><span v-if="ipo.bse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.bse_url" target="_blank">BSE</a></span><span v-if="ipo.nse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.nse_url" target="_blank">NSE</a></span></h3>
+		<div class="bg-orange-200 p-2 pl-4">
+			<h3 class="text-base"><span v-if="ipo.registrar">Registrar: <a :href="ipo.registrar.url" target="_blank">{{ ipo.registrar.name }}</a></span><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.rhp_url" target="_blank">Offer Document</a><span v-if="ipo.bse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.bse_url" target="_blank">BSE</a></span><span v-if="ipo.nse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.nse_url" target="_blank">NSE</a></span></h3>
 		</div>
-		<div class="p-2 m-3">
-			<h3 class="text-xl p-3">Issue Overview</h3>
-			<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
-				<div class="border-r md:border-r-0 bg-orange-200 p-3">
-					<ul class="divide-y divide-dashed">
-						<li v-if="ipo.price_band_low" class="border-b-1 border-orange-400 py-2">
-							<h4>Price Band</h4>
-							<p>&#8377; {{ ipo.price_band_low }} - {{ ipo.price_band_high }}</p>
+		<div class="bg-orange-300 p-2 pl-4 rounded-lg m-2">
+			<ul class="divide-x divide-solid flex ">
+						<li class="border-b-1 border-orange-400 p-2" v-if="ipo.open_date">
+							<h4 class="italic">Issue/Bids Opens</h4>
+							<p class="font-semibold">{{ formatDate(ipo.open_date) }}</p>
 						</li>
-						<li v-else class="border-b-1 border-orange-400 py-2">
-							<h4>Price</h4>
-							<p>&#8377; {{ ipo.price_band_high }}</p>
+						<li class="border-b-1 border-orange-400 p-2" v-if="ipo.close_date">
+							<h4 class="italic">Issue/Bids Closes</h4>
+							<p class="font-semibold">{{ formatDate(ipo.close_date) }}</p>
 						</li>
-						<li class="border-b-1 border-orange-400 py-2" v-if="ipo.open_date">
-							<h4>Issue/Bids Opens</h4>
-							<p>{{ formatDate(ipo.open_date) }}</p>
+						<li v-if="ipo.price_band_low" class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Price Band</h4>
+							<p class="font-semibold">&#8377; {{ ipo.price_band_low }} - {{ ipo.price_band_high }}</p>
 						</li>
-						<li class="border-b-1 border-orange-400 py-2" v-if="ipo.close_date">
-							<h4>Issue/Bids Closes</h4>
-							<p>{{ formatDate(ipo.close_date) }}</p>
+						<li v-else class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Price</h4>
+							<p class="font-semibold">&#8377; {{ ipo.price_band_high }}</p>
 						</li>
-						<li class="border-b-1 border-orange-400 py-2">
-							<h4>Lot Size and Amount</h4>
-							<p>{{ ipo.lot_size }} Shares @ &#8377;{{ ipo.price_band_high * ipo.lot_size }}</p>
+						<li class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Lot Size and Amount</h4>
+							<p class="font-semibold">{{ ipo.lot_size }} Shares @ &#8377;{{ ipo.price_band_high * ipo.lot_size }}</p>
+						</li>
+						<li v-if="ipo.issue_size" class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Issue Size: <span>&#8377; {{ ipo.issue_size }} Cr.</span></h4>
+							<p class="font-semibold"><span v-if="ipo.fresh_issue">Fresh: {{ ipo.fresh_issue }} Shares (&#8377; {{ amtInCr(ipo.fresh_issue * ipo.price_band_high) }} Cr.)</span></p>
+							<p class="font-semibold"><span v-if="ipo.offer_for_sale">OFS: {{ ipo.offer_for_sale }} Shares (&#8377; {{ amtInCr(ipo.offer_for_sale * ipo.price_band_high) }} Cr.)</span></p>
 						</li>
 					</ul>
-				</div>
-				<div class="border-r md:border-r-0 bg-orange-200 p-3">
-					<ul class="divide-y divide-dashed">
-						<li v-if="ipo.issue_size" class="border-b-1 border-orange-400 py-2">
-							<h4>Issue Size</h4>
-							<p>&#8377; {{ ipo.issue_size }} Cr.</p>
-						</li>
-						<li v-if="ipo.fresh_issue" class="border-b-1 border-orange-400 py-2">
-							<h4>Fresh Issue</h4>
-							<p>{{ ipo.fresh_issue }} Shares (&#8377; {{ amtInCr(ipo.fresh_issue * ipo.price_band_high) }} Cr.)</p>
-						</li>
-						<li v-if="ipo.offer_for_sale" class="border-b-1 border-orange-400 py-2">
-							<h4>Offer for Sale</h4>
-							<p>{{ ipo.offer_for_sale }} Shares (&#8377; {{ amtInCr(ipo.offer_for_sale * ipo.price_band_high) }} Cr.)</p>
-						</li>
-						<li v-if="ipo.no_of_total_shares" class="border-b-1 border-orange-400 py-2">
-							<h4>Market Cap at the time of IPO</h4>
-							<p>&#8377; {{ amtInCr(ipo.no_of_total_shares * ipo.price_band_high) }} Cr.</p>
-						</li>
-					</ul>
-				</div>
-				<div class="bg-orange-200 p-3">
-					<div v-if="minInvstment.length > 0">
-						<h3 class="font-semibold text-lg m-2">Minimum Investment</h3>
-						<ul class="divide-y divide-dashed">
-							<li v-for="(inv, i) in minInvstment" :key="i" class="border-b-1 border-orange-400 py-2">
-								<h4 class="font-semibold mt-2">{{ inv.category }}</h4>
-								<p>{{ inv.lots }} Lots ({{ inv.shares }} Shares) @ &#8377;{{ inv.amt }}</p>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
 		</div>
- 	</div>
+
 	 <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 m-3">
-		<div class="border-r md:border-r-0 bg-orange-200 p-3">
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
 			<IpoObjects :id="ipoId" />
 		</div>
-		<div class="border-r md:border-r-0 bg-orange-200 p-3">
-			<h3>Tentative Schedule</h3>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
+			<h3 class="text-xl">Tentative Schedule</h3>
 			<ul class="divide-y divide-dashed">
 				<li class="border-b-1 border-orange-400 py-2">
 					<h4 class="font-semibold mt-2">Finalisation of Basis of Allotment</h4>
@@ -227,22 +200,26 @@ onMounted(async() => {
 					<tr class="border border-gray-400">
 						<th class="border border-gray-400 text-left p-2">Category</th>
 						<th class="border border-gray-400 p-2">Quota</th>
+						<th class="border border-gray-400 p-2">Amount</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="quota in quotas" :key="quota.id">
 						<td class="border border-gray-400 p-2">{{ quota.cat.short_name }}</td>
 						<td class="border border-gray-400 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: {{ quota.discount }}</span></td>
+						<td class="border border-gray-400 p-2">&#8377; {{ amtInCr(quota.quota * ipo.price_band_high) }} Cr.</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 m-3">
-		<div v-if="subscriptions.length > 0">
-			<div v-for="(subs, i) in subscriptions" :key="i">
-				<h3>{{ formatDate(subs[0].day) }}</h3>
-				<table class="table-fixed w-full border">
+</div>
+	<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4 m-3">
+		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-100 p-3">
+			<h3 class="text-xl">Subscriptions</h3>
+			<Tabs variant="underline" v-model="activeTab" class="p-5">
+				<Tab v-for="(subs, i) in subscriptions" :key="i" :name="formatDate(subs[0].day)" :title="formatDate(subs[0].day)">
+					<table class="table-fixed w-full border">
 					<thead class="bg-orange-200">
 						<tr class="border border-gray-400">
 							<th class="border border-gray-400 text-left p-2">Category</th>
@@ -260,19 +237,49 @@ onMounted(async() => {
 						</tr>
 					</tbody>
 				</table>
+				</Tab>
+			</Tabs>
+		</div>
+		<div class="border-r md:border-r-0 bg-orange-100 p-3">
+			<h3 class="text-xl">Listing Day Data</h3>
+			<div class="flex flex-row items-center justify-between mb-4">
+			<button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="prevButton">
+				<svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+				<path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+				</svg>
+			</button>
+			<div class="flex overflow-x-auto space-x-4">
+				<!-- Scrollable container for cards -->
+				<div class="flex-shrink-0">
+				<!-- Card 1 -->
+				<div class="rounded-lg shadow-md p-4" style="width: 300px;">
+					<pre>{{ listing_data.nse }}</pre>
+				</div>
+				</div>
+				<div class="flex-shrink-0">
+				<!-- Card 2 -->
+				<div class=" rounded-lg shadow-md p-4" style="width: 300px;">
+					<pre>{{ listing_data.bse }}</pre>
+				</div>
+				</div>
+				<!-- Add more cards as needed -->
+			</div>
+			<button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="nextButton">
+				<svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+				<path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+				</svg>
+			</button>
 			</div>
 		</div>
-		<div><pre v-if="listing_data.bse">{{ listing_data.bse }}</pre></div>
-		<div><pre v-if="listing_data.nse">{{ listing_data.nse }}</pre></div>
+
 	</div>
 	<Accordion>
 		<accordion-panel v-if="ipo.about_html">
-      		<accordion-header class="text-2xl">About Company</accordion-header>
+      		<accordion-header class="text-xl">About Company</accordion-header>
       		<accordion-content>
 				<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
 	  		</accordion-content>
 	  	</accordion-panel>
-
 		<CompInfo :id="ipoId" v-else />
 		<Promoters :id="ipoId" />
 		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
@@ -288,7 +295,6 @@ h3{
     margin: 0;
     font-family: "Raleway", sans-serif;
     font-weight: 300;
-    font-size: 26px;
     color: #080808;
     -webkit-transition: all 0.4s ease 0s;
     -o-transition: all 0.4s ease 0s;

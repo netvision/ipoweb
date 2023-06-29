@@ -6,7 +6,7 @@
 </script>
 <template>
 	<accordion-panel>
-      <accordion-header class="text-2xl">Peers Comparision</accordion-header>
+      <accordion-header class="text-base">Peers Comparision</accordion-header>
       <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">Peers Comparision</h3>
 		<table class="peers table-fixed w-auto border mx-8" v-if="props.content && props.content.row.length > 0">

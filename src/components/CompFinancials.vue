@@ -4,7 +4,7 @@
 </script>
 <template>
 	<accordion-panel>
-      <accordion-header class="text-2xl">Company Financials</accordion-header>
+      <accordion-header class="text-base">Company Financials</accordion-header>
       <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">Company Financials</h3>
 		<div class="grid gap-4 text-center md:grid-cols-2 items-stretch lg:gap-12 px-8">
