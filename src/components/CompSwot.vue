@@ -4,7 +4,7 @@ import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 	const props = defineProps(['content'])
 </script>
 <template>
-	<accordion-panel>
+	<accordion-panel class="mb-10">
       <accordion-header class="text-base">SWOT</accordion-header>
       <accordion-content>
 		<h3 class="text-2xl font-sans font-bold m-4 p-4">SWOT</h3>

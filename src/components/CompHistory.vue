@@ -24,8 +24,9 @@ const getEvents = async() => {
 getEvents()
 </script>
 <template>
-	<div class="p-6 h-auto max-h-80 scroll-my-2 overflow-y-auto">
-
+	<div v-if="Object.keys(events).length > 0">
+	<h3 class="text-lg font-sans font-bold italic">Historical Timeline</h3>
+	<div class="p-3 h-auto max-h-80 scroll-my-2 overflow-y-auto">
 		<ol class="border-l-2 border-info-100" v-if="events">
 			<li v-for="(evt, k) in events" :key="k">
 				<div class="flex-start md:flex">
@@ -43,16 +44,16 @@ getEvents()
 						</svg>
 					</div>
 					<div
-						class="mb-6 ml-6 block max-w-md rounded-lg bg-neutral-50 px-6 shadow-md shadow-black/5 dark:bg-neutral-700 dark:shadow-black/10">
-						<div class="mb-4 flex justify-between">
+						class="mb-2 ml-6 block max-w-md rounded-lg bg-orange-50 px-6 shadow-md shadow-black/5 dark:bg-neutral-700 dark:shadow-black/10">
+						<div class="flex justify-between">
 						<h3
-							class="text-xl text-info transition duration-150 ease-in-out hover:text-info-600 focus:text-info-600 active:text-info-700"
+							class="text-lg text-info transition duration-150 ease-in-out hover:text-info-600 focus:text-info-600 active:text-info-700"
 							>{{ k }}</h3
 						>
 
 						</div>
 						<ul v-if="evt.length > 0">
-							<li v-for="item in evt" :key="item.id" class="list-disc list-outside p-1 px-2 text-lg">
+							<li v-for="item in evt" :key="item.id" class="list-disc list-outside p-1 px-2 text-base">
 								{{ item.heading }}
                 <div v-if="item.detail_html" v-html="item.detail_html" class="text-gray-700 text-sm font-thin italic" />
 							</li>
@@ -62,5 +63,6 @@ getEvents()
 					</div>
 			</li>
 		</ol>
+	</div>
 	</div>
 </template>

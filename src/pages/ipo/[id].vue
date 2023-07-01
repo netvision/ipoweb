@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios';
-
+import Slider from '@vueform/slider'
 import { useRoute } from 'vue-router'
 
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Tabs, Tab } from 'flowbite-vue';
@@ -106,6 +106,7 @@ onMounted(async() => {
 		if(listing_data.value.nse.scrip_code != null){
 			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data.priceInfo)
 		}
+
 	  }
 	  else console.log("the issue is not listed yet")
 
@@ -128,7 +129,7 @@ onMounted(async() => {
 			</h2>
 		</div>
 		<div class="bg-orange-200 p-2 pl-4">
-			<h3 class="text-base"><span v-if="ipo.registrar">Registrar: <a :href="ipo.registrar.url" target="_blank">{{ ipo.registrar.name }}</a></span><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.rhp_url" target="_blank">Offer Document</a><span v-if="ipo.bse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.bse_url" target="_blank">BSE</a></span><span v-if="ipo.nse_url"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.nse_url" target="_blank">NSE</a></span></h3>
+			<h3 class="text-base"><span v-if="ipo.registrar">Registrar: <a :href="ipo.registrar.url" target="_blank">{{ ipo.registrar.name }}</a></span><span class="border-r-2 border-orange-600 mx-2"></span><a :href="ipo.rhp_url" target="_blank">Offer Document</a><span v-if="listing_data.bse"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="listing_data.bse?.url" target="_blank">BSE</a></span><span v-if="listing_data.nse"><span class="border-r-2 border-orange-600 mx-2"></span><a :href="listing_data.nse.url" target="_blank">NSE</a></span></h3>
 		</div>
 		<div class="bg-orange-300 p-2 pl-4 rounded-lg m-2">
 			<ul class="divide-x divide-solid flex ">
@@ -142,7 +143,7 @@ onMounted(async() => {
 						</li>
 						<li v-if="ipo.price_band_low" class="border-b-1 border-orange-400 p-2">
 							<h4 class="italic">Price Band</h4>
-							<p class="font-semibold">&#8377; {{ ipo.price_band_low }} - {{ ipo.price_band_high }}</p>
+							<p class="font-semibold">&#8377;{{ ipo.price_band_low }} - &#8377;{{ ipo.price_band_high }}</p>
 						</li>
 						<li v-else class="border-b-1 border-orange-400 p-2">
 							<h4 class="italic">Price</h4>
@@ -160,12 +161,30 @@ onMounted(async() => {
 					</ul>
 		</div>
 
-	 <div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 m-3">
-		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
-			<IpoObjects :id="ipoId" />
+	 <div class="grid grid-cols-1 md:flex md:gap-4 m-3">
+
+		<IpoObjects :id="ipoId" />
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
+			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Categories Quota and Discount</h3>
+			<table class="table-fixed w-full border">
+				<thead class="bg-orange-200">
+					<tr class="border border-gray-100">
+						<th class="border border-gray-100 text-left p-2">Category</th>
+						<th class="border border-gray-100 p-2">Quota</th>
+						<th class="border border-gray-100 p-2">Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="quota in quotas" :key="quota.id">
+						<td class="border border-gray-100 p-2">{{ quota.cat.short_name }}</td>
+						<td class="border border-gray-100 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: &#8377;{{ quota.discount }}</span></td>
+						<td class="border border-gray-100 p-2">&#8377; {{ amtInCr(quota.quota * (ipo.price_band_high - +quota.discount)) }} Cr.</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
-		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
-			<h3 class="text-xl">Tentative Schedule</h3>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
+			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-500 to-purple-500 text-transparent bg-clip-text">Tentative Schedule</h3>
 			<ul class="divide-y divide-dashed">
 				<li class="border-b-1 border-orange-400 py-2">
 					<h4 class="font-semibold mt-2">Finalisation of Basis of Allotment</h4>
@@ -193,30 +212,12 @@ onMounted(async() => {
 				</li>
 			</ul>
 		</div>
-		<div class="border-r md:border-r-0 bg-orange-200 p-3">
-			<h3 class="text-xl">Categories Quota and Discount</h3>
-			<table class="table-fixed w-full border">
-				<thead class="bg-orange-200">
-					<tr class="border border-gray-400">
-						<th class="border border-gray-400 text-left p-2">Category</th>
-						<th class="border border-gray-400 p-2">Quota</th>
-						<th class="border border-gray-400 p-2">Amount</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="quota in quotas" :key="quota.id">
-						<td class="border border-gray-400 p-2">{{ quota.cat.short_name }}</td>
-						<td class="border border-gray-400 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: {{ quota.discount }}</span></td>
-						<td class="border border-gray-400 p-2">&#8377; {{ amtInCr(quota.quota * ipo.price_band_high) }} Cr.</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+
 	</div>
-</div>
+
 	<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4 m-3">
-		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-100 p-3">
-			<h3 class="text-xl">Subscriptions</h3>
+		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
+			<h3 class="text-xl text-gray-800 animate-typing font-[Comfortaa]">Subscriptions</h3>
 			<Tabs variant="underline" v-model="activeTab" class="p-5">
 				<Tab v-for="(subs, i) in subscriptions" :key="i" :name="formatDate(subs[0].day)" :title="formatDate(subs[0].day)">
 					<table class="table-fixed w-full border">
@@ -240,42 +241,60 @@ onMounted(async() => {
 				</Tab>
 			</Tabs>
 		</div>
-		<div class="border-r md:border-r-0 bg-orange-100 p-3">
-			<h3 class="text-xl">Listing Day Data</h3>
-			<div class="flex flex-row items-center justify-between mb-4">
-			<button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="prevButton">
-				<svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-				<path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-				</svg>
-			</button>
-			<div class="flex overflow-x-auto space-x-4">
-				<!-- Scrollable container for cards -->
-				<div class="flex-shrink-0">
-				<!-- Card 1 -->
-				<div class="rounded-lg shadow-md p-4" style="width: 300px;">
-					<pre>{{ listing_data.nse }}</pre>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-if="listing_data.nse || listing_data.bse">
+			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Listing Day Data</h3>
+			<div class="flex justify-between border-b border-b-2 border-gray-200 p-2">
+				<div>
+				<p class="text-gray-600">Listed on</p>
+				<p class="text-base font-bold">{{ formatDate(listing_data.nse?.listing_date) }}</p>
 				</div>
+				<div v-if="listing_data.nse">
+				<p class="text-gray-600">NSE</p>
+				<p class="text-base font-bold">&#8377;{{ listing_data.nse?.listing_price }}</p>
 				</div>
-				<div class="flex-shrink-0">
-				<!-- Card 2 -->
-				<div class=" rounded-lg shadow-md p-4" style="width: 300px;">
-					<pre>{{ listing_data.bse }}</pre>
+				<div v-if="listing_data.bse">
+				<p class="text-gray-600">BSE</p>
+				<p class="text-base font-bold">&#8377;{{ listing_data.bse?.listing_price }}</p>
 				</div>
-				</div>
-				<!-- Add more cards as needed -->
 			</div>
-			<button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="nextButton">
-				<svg class="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-				<path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
-				</svg>
-			</button>
+			<div class="flex justify-between mt-4 mb-2">
+				<div>
+				<p class="text-base">Low: &#8377;{{ listing_data.nse?.low }}</p>
+				</div>
+				<div>
+				<p class="text-base">High: &#8377;{{ listing_data.nse?.high }}</p>
+				</div>
 			</div>
+			<div class="px-6">
+				<Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+			</div>
+			<div class="flex justify-between mt-8 pt-2 mb-2">
+				<div>
+				<p class="text-base">Pre-open Volume</p>
+				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.preopen_volume ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.preopen_volume ?? 'NA' }}</p>
+				</div>
+				<div>
+				<p class="text-base">Volume</p>
+				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.volume ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.volume ?? 'NA' }}</p>
+				</div>
+			</div>
+			<div class="flex justify-between mt-2 pt-2 mb-2">
+				<div>
+				<p class="text-base">Delivery</p>
+				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.delivery ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.delivery ?? 'NA' }}</p>
+				</div>
+				<div>
+				<p class="text-base">Free Float</p>
+				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.free_float ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.free_float ?? 'NA' }}</p>
+				</div>
+			</div>
+
 		</div>
 
 	</div>
-	<Accordion>
+	<Accordion flush class="m-4">
 		<accordion-panel v-if="ipo.about_html">
-      		<accordion-header class="text-xl">About Company</accordion-header>
+      		<accordion-header class="text-base">About Company</accordion-header>
       		<accordion-content>
 				<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
 	  		</accordion-content>
@@ -286,20 +305,14 @@ onMounted(async() => {
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
 	</Accordion>
-
+	<Footer />
+</div>
 </template>
-<style scoped>
-h3{
-    position: relative;
-	padding: 0;
-    margin: 0;
-    font-family: "Raleway", sans-serif;
-    font-weight: 300;
-    color: #080808;
-    -webkit-transition: all 0.4s ease 0s;
-    -o-transition: all 0.4s ease 0s;
-    transition: all 0.4s ease 0s;
-}
+<style src="@vueform/slider/themes/default.css"></style>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Crimson+Text:ital@0;1&family=Satisfy&display=swap');
+
 .wp-style{
   color: #222;
   font-family: 'Open Sans', sans-serif;

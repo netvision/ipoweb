@@ -20,7 +20,6 @@ const formatDate = (d) => {
     <accordion-panel v-if="compInfo && compInfo[0]">
       <accordion-header class="text-base">Company Information</accordion-header>
       <accordion-content>
-        <h3 class="text-2xl font-sans font-bold">Company Information</h3>
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<div>
 				<div class="m-3 shadow-dark-300">
@@ -28,7 +27,6 @@ const formatDate = (d) => {
 					<p class="font-bold" v-if="compInfo[0].reg_no">Reg. No.: {{ compInfo[0].reg_no }}</p>
 					<p class="font-bold"><span v-if="compInfo[0].cin">CIN: {{ compInfo[0].cin }}</span></p>
 				</div>
-				<h3 class="m-3 text-lg font-sans font-bold">Historical Timeline</h3>
 				<CompHistory :id="props.id" />
 				<div class="m-3 shadow-dark-300">
 					<h3 class="text-lg font-sans font-bold">Company Secretary</h3>
@@ -56,7 +54,7 @@ const formatDate = (d) => {
 			<div class="col-span-2">
 				<h3 class="text-xl font-sans font-bold">Brief Intro</h3>
 				<div class="editor" v-html="compInfo[0].brief_intro_html" />
-				<h3 class="text-xl font-sans font-bold mt-3">Business</h3>
+				<h3 class="text-xl font-sans font-bold mt-3" v-if="compInfo[0].business_info">Business</h3>
 				<div class="editor" v-html="compInfo[0].business_info" />
 
 				<CompClients :id="props.id" />
