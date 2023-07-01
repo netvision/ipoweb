@@ -14,6 +14,7 @@ const subscriptions = ref([])
 const today = new Date()
 const listing_data = ref({})
 const activeTab = ref()
+const activeExch = ref()
 useHead({
 	title: title.value
 })
@@ -103,10 +104,14 @@ onMounted(async() => {
 	  if(ipo.value.listings.length > 0 && ipo.value.listings[0].listing_date){
 		listing_data.value.bse = ipo.value.listings.filter(x => x.exchange === "BSE")[0]
 		listing_data.value.nse = ipo.value.listings.filter(x => x.exchange === "NSE")[0]
-		if(listing_data.value.nse.scrip_code != null){
-			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data.priceInfo)
+		activeExch.value = (listing_data.value.nse) ? 'NSE' : 'BSE'
+		if(listing_data.value.nse?.scrip_code != null){
+			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data)
 		}
-
+		if(listing_data.value.bse?.scrip_code != null){
+			listing_data.value.bse.live = await axios.get('https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&seriesid=&scripcode='+listing_data.value.bse.scrip_code.trim()).then(r => r.data)
+		}
+		console.log(listing_data.value)
 	  }
 	  else console.log("the issue is not listed yet")
 
@@ -125,7 +130,7 @@ onMounted(async() => {
 				<span class="text-base"><sub>{{ (ipo.ipo_type == 'SME') ? 'SME' : 'IPO' }}</sub></span>
 				<span class="mb-2 p-2"><a :href="ipo.company_url" target="_blank"><svg class="inline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 30 30">
 <path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path>
-</svg></a></span><span v-if="listing_data.nse && listing_data.nse.scrip_code != null">&#8377; {{ listing_data.nse?.live?.lastPrice }}</span>
+</svg></a></span><span v-if="listing_data.nse && listing_data.nse.scrip_code != null">&#8377; {{ listing_data.nse?.live?.priceInfo.lastPrice }}</span><span v-else-if="listing_data.bse && listing_data.bse.scrip_code != null">&#8377; {{ listing_data.bse?.live?.CurrRate.LTP }}</span>
 			</h2>
 		</div>
 		<div class="bg-orange-200 p-2 pl-4">
@@ -215,7 +220,7 @@ onMounted(async() => {
 
 	</div>
 
-	<div class="grid grid-cols-1 md:grid-cols-2 md:gap-4 m-3">
+	<div class="grid grid-flow-col auto-cols-fr md:gap-4 m-3">
 		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
 			<h3 class="text-xl text-gray-800 animate-typing font-[Comfortaa]">Subscriptions</h3>
 			<Tabs variant="underline" v-model="activeTab" class="p-5">
@@ -243,52 +248,170 @@ onMounted(async() => {
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-if="listing_data.nse || listing_data.bse">
 			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Listing Day Data</h3>
-			<div class="flex justify-between border-b border-b-2 border-gray-200 p-2">
-				<div>
-				<p class="text-gray-600">Listed on</p>
-				<p class="text-base font-bold">{{ formatDate(listing_data.nse?.listing_date) }}</p>
-				</div>
-				<div v-if="listing_data.nse">
-				<p class="text-gray-600">NSE</p>
-				<p class="text-base font-bold">&#8377;{{ listing_data.nse?.listing_price }}</p>
-				</div>
-				<div v-if="listing_data.bse">
-				<p class="text-gray-600">BSE</p>
-				<p class="text-base font-bold">&#8377;{{ listing_data.bse?.listing_price }}</p>
-				</div>
-			</div>
-			<div class="flex justify-between mt-4 mb-2">
-				<div>
-				<p class="text-base">Low: &#8377;{{ listing_data.nse?.low }}</p>
-				</div>
-				<div>
-				<p class="text-base">High: &#8377;{{ listing_data.nse?.high }}</p>
-				</div>
-			</div>
-			<div class="px-6">
-				<Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
-			</div>
-			<div class="flex justify-between mt-8 pt-2 mb-2">
-				<div>
-				<p class="text-base">Pre-open Volume</p>
-				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.preopen_volume ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.preopen_volume ?? 'NA' }}</p>
-				</div>
-				<div>
-				<p class="text-base">Volume</p>
-				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.volume ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.volume ?? 'NA' }}</p>
-				</div>
-			</div>
-			<div class="flex justify-between mt-2 pt-2 mb-2">
-				<div>
-				<p class="text-base">Delivery</p>
-				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.delivery ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.delivery ?? 'NA' }}</p>
-				</div>
-				<div>
-				<p class="text-base">Free Float</p>
-				<p class="text-base font-semibold">BSE: {{ listing_data.bse?.free_float ?? 'NA' }} <span class="text-orange-300">|</span> NSE: {{ listing_data.nse?.free_float ?? 'NA' }}</p>
-				</div>
-			</div>
+			<Tabs variant="underline" v-model="activeExch" class="py-2">
+				<Tab v-if="listing_data.nse" name="NSE" title="NSE">
+					<div class="bg-orange-100 p-4 rounded-md">
+         				<div class="flex justify-between border-b-2 border-gray-200 p-2">
+         						<div>
+         							<p class="text-gray-600">Listed on</p>
+         							<p class="text-base font-bold">{{ listing_data.nse?.listing_date }}</p>
+         						</div>
+         						<div>
+         							<p class="text-gray-600">Listing Price</p>
+         							<p class="text-base font-bold">&#8377;{{ listing_data.nse?.listing_price }}</p>
+         						</div>
+         					</div>
+         					<div class="flex justify-between mt-4 mb-2">
+         						<div>
+         						<p class="text-base">Low: &#8377;{{ listing_data.nse?.low }}</p>
+         						</div>
+         						<div>
+         						<p class="text-base">High: &#8377;{{ listing_data.nse?.high }}</p>
+         						</div>
+         					</div>
+         					<div class="px-6">
+         						<Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         					</div>
+         					<div class="flex justify-between mt-8 pt-2 mb-2">
+         						<div>
+         							<p class="text-base">Pre-open Volume</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.preopen_volume ?? 'NA' }}</p>
+         						</div>
+         						<div>
+         							<p class="text-base">Volume</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.volume ?? 'NA' }}</p>
+         						</div>
+         					</div>
+         					<div class="flex justify-between mt-2 pt-2 mb-2">
+         						<div>
+         							<p class="text-base">Delivery</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.delivery ?? 'NA' }}</p>
+         						</div>
+         						<div>
+         							<p class="text-base">Free Float</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.free_float ?? 'NA' }}</p>
+         						</div>
+         					</div>
+     </div>
+				</Tab>
+				<Tab v-if="listing_data.bse" name="BSE" title="BSE">
+					<div class="bg-orange-100 p-4 rounded-md">
+         					<div class="flex justify-between border-b border-gray-200 p-2">
+         						<div>
+         							<p class="text-gray-600">Listed on</p>
+         							<p class="text-base font-bold">{{ listing_data.bse?.listing_date }}</p>
+         						</div>
+         						<div>
+         							<p class="text-gray-600">Listing Price</p>
+         							<p class="text-base font-bold">&#8377;{{ listing_data.bse?.listing_price }}</p>
+         						</div>
+         					</div>
+         					<div class="flex justify-between mt-4 mb-2">
+         						<div>
+         						<p class="text-base">Low: &#8377;{{ listing_data.bse?.low }}</p>
+         						</div>
+         						<div>
+         						<p class="text-base">High: &#8377;{{ listing_data.bse?.high }}</p>
+         						</div>
+         					</div>
+         					<div class="px-6">
+         						<Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         					</div>
+         					<div class="flex justify-between mt-8 pt-2 mb-2">
+         						<div>
+         							<p class="text-base">Pre-open Volume</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.preopen_volume ?? 'NA' }}</p>
+         						</div>
+         						<div>
+         							<p class="text-base">Volume</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.volume ?? 'NA' }}</p>
+         						</div>
+         					</div>
+         					<div class="flex justify-between mt-2 pt-2 mb-2">
+         						<div>
+         							<p class="text-base">Delivery</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.delivery ?? 'NA' }}</p>
+         						</div>
+         						<div>
+         							<p class="text-base">Free Float</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.free_float ?? 'NA' }}</p>
+         						</div>
+         					</div>
+     					</div>
+				</Tab>
+			</Tabs>
+		</div>
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-if="listing_data.nse || listing_data.bse">
+			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Current Status</h3>
+			<Tabs variant="underline" v-model="activeExch" class="py-2">
+				<Tab v-if="listing_data.nse" name="NSE" title="NSE">
+					<div class="bg-orange-100 p-4 rounded-md">
+         				<div class="flex justify-between border-b-2 border-gray-200 p-2">
+         						<div>
+         							<p class="text-gray-600">As on</p>
+         							<p class="text-base font-bold">{{ listing_data.nse?.live?.metadata.lastUpdateTime }}</p>
+         						</div>
+         						<div>
+         							<p class="text-gray-600">Price</p>
+         							<p class="text-base font-bold">&#8377;{{ listing_data.nse?.live?.priceInfo.lastPrice }}</p>
+         						</div>
+         					</div>
+							<div class="mt-4 font-[Satisfy] italic text-green-500">Days Low and High</div>
+         					<div class="flex justify-between mb-2">
+         						<div>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.intraDayHighLow.min }}</p>
+         						</div>
+         						<div>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.intraDayHighLow.max }}</p>
+         						</div>
+         					</div>
+         					<div class="px-6 mb-4" v-if="listing_data.nse?.live?.priceInfo.intraDayHighLow.min">
+								<Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+         					</div>
+							 <div class="mt-11 border-t-2 border-gray-100 font-[Satisfy] italic text-green-500">52 Weeks Low and High</div>
+         					<div class="flex justify-between mb-2">
+         						<div>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.weekHighLow.min }}</p>
+								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.priceInfo.weekHighLow.minDate }}</p>
+         						</div>
+         						<div>
+								<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.weekHighLow.max }}</p>
+								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.priceInfo.weekHighLow.maxDate }}</p>
+         						</div>
+         					</div>
+         					<div class="px-6" v-if="listing_data.nse?.live?.priceInfo.weekHighLow.min">
+								<Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+         					</div>
+						</div>
+				</Tab>
+				<Tab v-if="listing_data.bse" name="BSE" title="BSE">
+					<div class="bg-orange-100 p-4 rounded-md">
+         				<div class="flex justify-between border-b-2 border-gray-200 p-2">
+         						<div>
+         							<p class="text-gray-600">As on</p>
+         							<p class="text-base font-bold">{{ listing_data.bse?.live?.Header.Ason }}</p>
+         						</div>
+         						<div>
+         							<p class="text-gray-600">Price</p>
+         							<p class="text-base font-bold">&#8377;{{ listing_data.bse?.live?.Header.LTP }}</p>
+         						</div>
+         					</div>
+							<div class="mt-4 font-[Satisfy] italic text-green-500">Days Low and High</div>
+         					<div class="flex justify-between mb-2">
+         						<div>
+         						<p class="text-base">&#8377;{{ listing_data.bse?.live?.Header.Low }}</p>
+         						</div>
+         						<div>
+         						<p class="text-base">&#8377;{{ listing_data.bse?.live?.Header.High }}</p>
+         						</div>
+         					</div>
+         					<div class="px-6 mb-4" v-if="listing_data.bse?.live?.Header">
+								<Slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+         					</div>
 
+						</div>
+				</Tab>
+			</Tabs>
 		</div>
 
 	</div>
