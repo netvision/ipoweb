@@ -41,10 +41,9 @@ getPromoters()
 	 <accordion-panel v-if="promoters && promoters.length > 0">
       <accordion-header class="text-base">Promoters</accordion-header>
       <accordion-content>
-	<h3 class="text-2xl font-sans font-bold m-4 p-4">Promoters</h3>
-	<div v-if="promoters && promoters.length > 0" class="grid gap-4 text-center md:grid-cols-3 items-stretch lg:gap-12 px-8">
+	<div v-if="promoters && promoters.length > 0" class="flex flex-row flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
 		<div v-for="(promoter, i) in promoters" :key="i"
-			class="flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row">
+			class="w-[400px] flex-none rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row">
 			<img
 				class="h-48 p-4"
 				:src="promoter.photo"
@@ -54,11 +53,11 @@ getPromoters()
 				{{ promoter.type }}
 				</p>
 				<h5
-				class="mb-2 text-xl text-left font-medium text-neutral-800 dark:text-neutral-50">
+				class="mb-2 text-lg text-left font-medium text-neutral-800 dark:text-neutral-50">
 				{{ promoter.name }}
 				</h5>
 
-				<div class="mb-4 text-base text-neutral-600 dark:text-neutral-200 text-left editor" v-html="promoter.description">
+				<div class="mb-4 text-sm text-neutral-600 dark:text-neutral-200 text-left editor" v-html="promoter.description">
 
 				</div>
 

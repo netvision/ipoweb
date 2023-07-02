@@ -8,8 +8,7 @@
 	<accordion-panel>
       <accordion-header class="text-base">Peers Comparision</accordion-header>
       <accordion-content>
-		<h3 class="text-2xl font-sans font-bold m-4 p-4">Peers Comparision</h3>
-		<table class="peers table-fixed w-auto border mx-8" v-if="props.content && props.content.row.length > 0">
+		<table class="peers table-fixed w-auto border mx-4" v-if="props.content && props.content.row.length > 0">
 			<thead class="bg-gray-200">
 				<tr class="border border-gray-400">
 					<th class="border border-gray-400 p-2" v-for="(col, i) in props.content.col" :key="i">{{ col.label }}</th>

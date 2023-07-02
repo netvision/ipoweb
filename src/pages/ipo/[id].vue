@@ -413,7 +413,10 @@ onMounted(async() => {
 				</Tab>
 			</Tabs>
 		</div>
-
+		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-else-if="new Date(ipo.close_date) < today">
+			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Basis of Allotment</h3>
+			<pre>{{ quotas }}</pre>
+		</div>
 	</div>
 	<Accordion flush class="m-4">
 		<accordion-panel v-if="ipo.about_html">
