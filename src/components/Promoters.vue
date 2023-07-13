@@ -38,9 +38,8 @@ getPromoters()
 
 </script>
 <template>
-	 <accordion-panel v-if="promoters && promoters.length > 0">
-      <accordion-header class="text-base">Promoters</accordion-header>
-      <accordion-content>
+	 <div v-if="promoters && promoters.length > 0">
+		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Promoters</h3>
 	<div v-if="promoters && promoters.length > 0" class="flex flex-row flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
 		<div v-for="(promoter, i) in promoters" :key="i"
 			class="w-[400px] flex-none rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row">
@@ -91,6 +90,5 @@ getPromoters()
                 </tbody>
             </table>
 	</div>
-	</accordion-content>
-	</accordion-panel>
+</div>
 </template>

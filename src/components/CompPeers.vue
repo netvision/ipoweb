@@ -5,9 +5,7 @@
 
 </script>
 <template>
-	<accordion-panel>
-      <accordion-header class="text-base">Peers Comparision</accordion-header>
-      <accordion-content>
+		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Peers Comparision</h3>
 		<table class="peers table-fixed w-auto border mx-4" v-if="props.content && props.content.row.length > 0">
 			<thead class="bg-gray-200">
 				<tr class="border border-gray-400">
@@ -21,8 +19,7 @@
 			</tbody>
 		</table>
 		<div class="editor" v-html="props.content.htmlNotes" />
-	</accordion-content>
-	</accordion-panel>
+
 </template>
 <style>
 

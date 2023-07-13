@@ -3,9 +3,8 @@
 	const props = defineProps(['content'])
 </script>
 <template>
-	<accordion-panel>
-      <accordion-header class="text-base">Company Financials</accordion-header>
-      <accordion-content>
+
+		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Company Financials</h3>
 		<div class="grid gap-4 text-center md:grid-cols-2 items-stretch lg:gap-12 px-4">
 			<div>
 				<h3 class="text-xl text-left font-bold my-4 font-[Comfortaa]" >Profit &amp; Loss Statement</h3>
@@ -39,6 +38,5 @@
 			</div>
 		</div>
 		<div v-if="props.content" class="editor" v-html="props.content.html_note"></div>
-		</accordion-content>
-		</accordion-panel>
+
 </template>

@@ -8,7 +8,7 @@ const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
 const title = ref(route.params.id.split('-')[1])
-const total = ref(0)
+const totalOffer = ref(0)
 const quotas = ref([])
 const subscriptions = ref([])
 const today = new Date()
@@ -64,7 +64,7 @@ onMounted(async() => {
 		]
 	}
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
-
+	totalOffer.value = total
 	let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
   	let net = res.reduce((acc, r) => {
        return ([4,5,7].includes(r.cat_id)) ? acc - r.quota : acc
@@ -86,18 +86,24 @@ onMounted(async() => {
 		let subs = logs.reduce((group, item) => {
 			const key = item.day;
 			if(!group[key]){
-				group[key] = []
+				group[key] = {
+					items: [],
+					totalSubscriptions: 0
+				};
 			}
 			let quota = quotas.value.filter(q => q.cat_id == item.cat_id)
-			group[key].push({...item, quota: quota[0].quota})
+			group[key].items.push({...item, quota: quota[0].quota})
+			group[key].totalSubscriptions += item.subscription;
 			return group
 		}, {})
-
+		console.log(subs)
 		Object.values(subs).forEach(v => {
-			if(v.filter(u => u.subscription > 0).length > 0){
-				subscriptions.value.push(v.sort((a,b) => a.cat.cat_order - b.cat.cat_order))
+			if(v.items.filter(u => u.subscription > 0).length > 0){
+				let items = v.items.sort((a,b) => a.cat.cat_order - b.cat.cat_order)
+				subscriptions.value.push({items: items, totalsubs: v.totalSubscriptions})
 			}
 		})
+		console.log(subscriptions.value)
 	  }
 	  else console.log("Issue is not open yet")
 
@@ -224,22 +230,25 @@ onMounted(async() => {
 		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
 			<h3 class="text-xl text-gray-800 animate-typing font-[Comfortaa]">Subscriptions</h3>
 			<Tabs variant="underline" v-model="activeTab" class="p-5">
-				<Tab v-for="(subs, i) in subscriptions" :key="i" :name="formatDate(subs[0].day)" :title="formatDate(subs[0].day)">
+				<Tab v-for="(subs, i) in subscriptions" :key="i" :name="formatDate(subs.items[0].day)" :title="formatDate(subs.items[0].day)">
 					<table class="table-fixed w-full border">
 					<thead class="bg-orange-200">
 						<tr class="border border-gray-400">
 							<th class="border border-gray-400 text-left p-2">Category</th>
 							<th class="border border-gray-400 p-2">Subscription</th>
 							<th class="border border-gray-400 p-2">Times</th>
-							<th class="border border-gray-400 p-2">Applications</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="item in subs" :key="subs.id">
+						<tr v-for="item in subs.items" :key="item.id">
 							<td class="border border-gray-400 p-2">{{ item.cat.short_name }}</td>
 							<td class="border border-gray-400 p-2">{{ item.subscription }} </td>
 							<td class="border border-gray-400 p-2">{{ (item.subscription / item.quota).toFixed(2) }}x</td>
-							<td class="border border-gray-400 p-2">{{ item.applications ?? 'NA' }}</td>
+						</tr>
+						<tr>
+							<td class="border border-gray-400 p-2 font-bold">Total</td>
+							<td class="border border-gray-400 p-2 font-bold">{{ subs.totalsubs }}</td>
+							<td class="border border-gray-400 p-2 font-bold">{{ (subs.totalsubs / totalOffer).toFixed(2) }}x</td>
 						</tr>
 					</tbody>
 				</table>
@@ -415,7 +424,7 @@ onMounted(async() => {
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-else-if="new Date(ipo.close_date) < today">
 			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Basis of Allotment</h3>
-			<pre>{{ quotas }}</pre>
+
 		</div>
 	</div>
 	<Accordion flush class="m-4">

@@ -17,9 +17,8 @@ const formatDate = (d) => {
 }
 </script>
 <template>
-    <accordion-panel v-if="compInfo && compInfo[0]">
-      <accordion-header class="text-base">Company Information</accordion-header>
-      <accordion-content>
+	<div v-if="compInfo && compInfo[0]">
+		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Company Information</h3>
 		<div class="grid grid-cols-1 md:grid-cols-3">
 			<div>
 				<div class="m-3 shadow-dark-300">
@@ -68,8 +67,7 @@ const formatDate = (d) => {
 				<CompLitigations :id="props.id" :note="compInfo[0].property_note" />
 			</div>
 		</div>
-      </accordion-content>
-    </accordion-panel>
+	</div>
 </template>
 <style>
 .editor ol {
