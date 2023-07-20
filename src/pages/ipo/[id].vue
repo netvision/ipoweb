@@ -1,5 +1,6 @@
 <script setup>
 import axios from 'axios';
+import slider from "vue3-slider"
 import { useRoute } from 'vue-router'
 import { Tabs, Tab } from 'flowbite-vue';
 const route = useRoute();
@@ -277,6 +278,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
+								<slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
          						<!-- <Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
@@ -322,6 +324,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
+								<slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
          						<!-- <Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
@@ -373,6 +376,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6 mb-4" v-if="listing_data.nse?.live?.priceInfo.intraDayHighLow.min">
+								<slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
 								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 							 <div class="mt-11 border-t-2 border-gray-100 font-[Satisfy] italic text-green-500">52 Weeks Low and High</div>
@@ -387,6 +391,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6" v-if="listing_data.nse?.live?.priceInfo.weekHighLow.min">
+								<slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
 								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 						</div>
@@ -413,6 +418,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6 mb-4" v-if="listing_data.bse?.live?.Header">
+								<slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
 								<!-- <Slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 
