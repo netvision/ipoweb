@@ -1,6 +1,5 @@
 <script setup>
 import axios from 'axios';
-import Slider from '@vueform/slider'
 import { useRoute } from 'vue-router'
 import { Tabs, Tab } from 'flowbite-vue';
 const route = useRoute();
@@ -278,7 +277,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
-         						<Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         						<!-- <Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
@@ -323,7 +322,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
-         						<Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         						<!-- <Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
@@ -374,7 +373,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6 mb-4" v-if="listing_data.nse?.live?.priceInfo.intraDayHighLow.min">
-								<Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 							 <div class="mt-11 border-t-2 border-gray-100 font-[Satisfy] italic text-green-500">52 Weeks Low and High</div>
          					<div class="flex justify-between mb-2">
@@ -388,7 +387,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6" v-if="listing_data.nse?.live?.priceInfo.weekHighLow.min">
-								<Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 						</div>
 				</Tab>
@@ -414,7 +413,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6 mb-4" v-if="listing_data.bse?.live?.Header">
-								<Slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" />
+								<!-- <Slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 
 						</div>
@@ -440,7 +439,6 @@ onMounted(async() => {
 	<Footer />
 </div>
 </template>
-<style src="@vueform/slider/themes/default.css"></style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Crimson+Text:ital@0;1&family=Satisfy&display=swap');
 

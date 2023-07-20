@@ -13,9 +13,6 @@ dependencies:
   '@types/node':
     specifier: ^18.0.4
     version: 18.0.4
-  '@vueform/slider':
-    specifier: ^2.1.7
-    version: 2.1.7
   '@vueuse/components':
     specifier: ^8.9.3
     version: 8.9.3(vue@3.3.4)
@@ -1878,10 +1875,6 @@ packages:
 
   /@vue/shared@3.3.4:
     resolution: {integrity: sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==}
-
-  /@vueform/slider@2.1.7:
-    resolution: {integrity: sha512-wKyiVVN03RKTV2vp7r50PDq5hcM4kVVzUO2ex+BAAtrn5oX08iU5NzWTWCuH7dCkiLMDRUVravDu3B0NwaxZMQ==}
-    dev: false
 
   /@vueuse/components@8.9.3(vue@3.3.4):
     resolution: {integrity: sha512-7A97cUdJxwAESo1dJvIzxGW7Z8n5LGrLPOrQ9qgNGUKZlwVgBHJNiQ5KMddDDoqSwTVrLGspc1p8q8/+tYpHKA==}
