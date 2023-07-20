@@ -427,19 +427,17 @@ onMounted(async() => {
 
 		</div>
 	</div>
-	<Accordion flush class="m-4">
-		<accordion-panel v-if="ipo.about_html">
-      		<accordion-header class="text-base">About Company</accordion-header>
-      		<accordion-content>
-				<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
-	  		</accordion-content>
-	  	</accordion-panel>
-		<CompInfo :id="ipoId" v-else />
+	
+		<div v-if="ipo.about_html">
+			<h3 class="mb-3 text-xl text-gray-800 animate">About Company</h3>
+			<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
+		</div>
+	  	<CompInfo :id="ipoId" v-else />
 		<Promoters :id="ipoId" />
 		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
-	</Accordion>
+	
 	<Footer />
 </div>
 </template>

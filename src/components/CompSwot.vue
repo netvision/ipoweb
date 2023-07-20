@@ -23,5 +23,4 @@ import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 				<div v-html="props.content.threats_html" class="editor text-left"></div>
 			</div>
 		</div>
-
 </template>

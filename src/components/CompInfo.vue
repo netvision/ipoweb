@@ -19,7 +19,7 @@ const formatDate = (d) => {
 <template>
 	<div v-if="compInfo && compInfo[0]">
 		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Company Information</h3>
-		<div class="grid grid-cols-1 md:grid-cols-3">
+		<div class="grid grid-cols-1 md:grid-cols-3 md:gap-5">
 			<div>
 				<div class="m-3 shadow-dark-300">
 					<p class="font-bold" v-if="compInfo[0].date_of_inc">Date of Inc.: {{ formatDate(compInfo[0].date_of_inc) }}</p>
@@ -75,7 +75,7 @@ const formatDate = (d) => {
 	@apply divide-blue-100 divide-y-2 gap-5;
 }
 .editor ul {
-	list-style: outside disc;
+	list-style: inside disc;
 }
 
 </style>

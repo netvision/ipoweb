@@ -11,6 +11,7 @@ import VueI18n from '@intlify/vite-plugin-vue-i18n';
 import generateSitemap from 'vite-ssg-sitemap';
 import VueRouter from 'unplugin-vue-router/vite';
 import { VueRouterExports } from 'unplugin-vue-router';
+import { hash } from './src/utils/functions.js'
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [
@@ -93,6 +94,15 @@ export default defineConfig({
 			include: [resolve(__dirname, 'locales/**')],
 		}),
 	],
+	build: {
+		rollupOptions: {
+		  output: {
+			entryFileNames: `[name]` + hash + `.js`,
+			chunkFileNames: `[name]` + hash + `.js`,
+			assetFileNames: `[name]` + hash + `.[ext]`
+		  }
+		}
+	  },
 	resolve: {
 		alias: {
 			'@': resolve(__dirname, './src'),
