@@ -1,6 +1,5 @@
 <script setup>
 import axios from 'axios';
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 const props = defineProps(['id'])
 const compInfo = ref()
 const getInfo = async() => {

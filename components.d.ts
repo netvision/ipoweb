@@ -8,7 +8,6 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
-    CatQuota: typeof import('./src/components/CatQuota.vue')['default']
     CompClients: typeof import('./src/components/CompClients.vue')['default']
     CompFinancials: typeof import('./src/components/CompFinancials.vue')['default']
     CompHistory: typeof import('./src/components/CompHistory.vue')['default']
@@ -27,7 +26,6 @@ declare module '@vue/runtime-core' {
     Promoters: typeof import('./src/components/Promoters.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Subscriptions: typeof import('./src/components/Subscriptions.vue')['default']
     Topbar: typeof import('./src/components/Topbar.vue')['default']
   }
 }

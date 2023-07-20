@@ -1,8 +1,5 @@
 <script setup>
-	import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 	const props = defineProps(['content'])
-
-
 </script>
 <template>
 		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Peers Comparision</h3>

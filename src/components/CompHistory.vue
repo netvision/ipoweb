@@ -1,11 +1,5 @@
 <script setup>
 import axios from 'axios'
-import {
-  Ripple,
-  initTE,
-} from "tw-elements";
-
-initTE({ Ripple });
 const props = defineProps(['id'])
 const events = ref([])
 const getEvents = async() => {

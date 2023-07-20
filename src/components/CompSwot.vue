@@ -1,6 +1,4 @@
 <script setup>
-
-import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
 	const props = defineProps(['content'])
 </script>
 <template>

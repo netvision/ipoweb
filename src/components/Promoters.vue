@@ -1,13 +1,8 @@
 <script setup>
 import axios from 'axios';
-import { AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
-
 const props = defineProps(['id'])
-
-
 const promoters = ref([])
 const holdings = ref([])
-
 const getPromoters = async() => {
 	let res = await axios.get('https://droplet.netserve.in/promoter?ipo_id='+props.id).then(r => r.data)
 	if(res.length > 0) {

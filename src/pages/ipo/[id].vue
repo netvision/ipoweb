@@ -1,9 +1,7 @@
 <script setup>
 import axios from 'axios';
-import Slider from '@vueform/slider'
 import { useRoute } from 'vue-router'
-
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Tabs, Tab } from 'flowbite-vue';
+import { Tabs, Tab } from 'flowbite-vue';
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
@@ -279,7 +277,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
-         						<Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         						<!-- <Slider v-model="listing_data.nse.close" :min="listing_data.nse.low" :max="listing_data.nse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
@@ -324,7 +322,7 @@ onMounted(async() => {
          						</div>
          					</div>
          					<div class="px-6">
-         						<Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled />
+         						<!-- <Slider v-model="listing_data.bse.close" :min="listing_data.bse.low" :max="listing_data.bse.high" tooltipPosition="bottom" :format="{prefix: 'Close: '}" disabled /> -->
          					</div>
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
@@ -427,7 +425,7 @@ onMounted(async() => {
 
 		</div>
 	</div>
-	
+
 		<div v-if="ipo.about_html">
 			<h3 class="mb-3 text-xl text-gray-800 animate">About Company</h3>
 			<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
@@ -437,11 +435,10 @@ onMounted(async() => {
 		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
-	
+
 	<Footer />
 </div>
 </template>
-<style src="@vueform/slider/themes/default.css"></style>
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Crimson+Text:ital@0;1&family=Satisfy&display=swap');
