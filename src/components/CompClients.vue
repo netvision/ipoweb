@@ -12,7 +12,7 @@ getClients()
 </script>
 <template>
 	<div v-if="clients.length > 0">
-	<h3 class="text-xl font-sans font-bold mt-4">Clientele</h3>
+	<h3 class="text-xl font-bold mt-4 font-['Lugrasimo'] text-orange-800">Clientele</h3>
 	<div class="grid gap-4 text-center md:grid-cols-4 items-end lg:gap-12" v-if="clients.length > 0">
 		<div class="mb-12 md:mb-0" v-for="client in clients" :key="client.id">
 			<div class="mb-6 flex justify-center">

@@ -18,7 +18,7 @@
 </script>
 <template>
 	<div v-if="Object.keys(properties).length > 0">
-	<h3 class="text-xl font-sans font-bold mt-4 mb-2">Properties</h3>
+	<h3 class="text-xl font-['Lugrasimo'] text-orange-800 font-bold mt-4 mb-2">Properties</h3>
 	<div class="mb-12 md:mb-0" v-for="(item, k) in properties" :key="k">
 		<h4 class="text-lg font-sans mt-2 font-bold">{{ k }}</h4>
 		<ul v-if="item.length > 0" class="list-disc list-inside">

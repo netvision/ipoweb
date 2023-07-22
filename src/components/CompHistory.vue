@@ -19,8 +19,8 @@ getEvents()
 </script>
 <template>
 	<div v-if="Object.keys(events).length > 0">
-	<h3 class="text-lg font-sans font-bold italic">Historical Timeline</h3>
-	<div class="p-3 h-auto max-h-80 scroll-my-2 overflow-y-auto">
+	<h3 class="text-lg font-['Lugrasimo'] font-bold italic text-orange-800">Historical Timeline</h3>
+	<div class="p-3 h-auto max-h-80 scroll-my-2 overflow-y-auto custom-scroll">
 		<ol class="border-l-2 border-info-100" v-if="events">
 			<li v-for="(evt, k) in events" :key="k">
 				<div class="flex-start md:flex">
@@ -60,3 +60,17 @@ getEvents()
 	</div>
 	</div>
 </template>
+<style>
+.custom-scroll{
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+}
+.custom-scroll::-webkit-scrollbar { display: none;}
+.custom-scroll:hover{
+	scrollbar-width: 5px; /* Firefox */
+	-ms-overflow-style: scrollbar;
+}
+.custom-scroll:hover::-webkit-scrollbar{
+	display: block;
+}
+</style>

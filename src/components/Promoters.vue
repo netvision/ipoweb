@@ -33,9 +33,17 @@ getPromoters()
 
 </script>
 <template>
-	 <div v-if="promoters && promoters.length > 0">
-		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Promoters</h3>
-	<div v-if="promoters && promoters.length > 0" class="flex flex-row flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
+<div v-if="promoters && promoters.length > 0" class="bg-gradient-to-b from-orange-200  to-orange-100">
+		<h1 class="text-2xl mx-5 font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+                    Promoters
+		</h1>
+
+		<div class="flex mx-auto my-2 pl-5">
+			<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+		</div>
+	<div v-if="promoters && promoters.length > 0" class="mx-5 flex flex-row flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
 		<div v-for="(promoter, i) in promoters" :key="i"
 			class="w-[400px] flex-none rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row">
 			<img
@@ -58,7 +66,7 @@ getPromoters()
 			</div>
 		</div>
 	</div>
-	<div v-if="holdings.length > 0" class="text-xl font-bold m-4 p-4" style="font-family: 'Josefin Sans', sans-serif;">Promoters Shareholding Pattern</div>
+	<div v-if="holdings.length > 0" class="text-xl font-bold m-5 mb-2" style="font-family: 'Josefin Sans', sans-serif;">Promoters Shareholding Pattern</div>
 	<div v-if="holdings.length > 0" class="px-8">
 		<table class="table-fixed w-full border">
                 <thead class="bg-gray-200">

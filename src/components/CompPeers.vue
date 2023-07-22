@@ -2,7 +2,16 @@
 	const props = defineProps(['content'])
 </script>
 <template>
-		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Peers Comparision</h3>
+	<div class="bg-gradient-to-b from-orange-200  to-orange-100">
+		<h1 class="mt-5 ml-5 text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+                    Peers Comparision
+		</h1>
+
+		<div class="flex mx-auto ml-5 mt-2 mb-5">
+			<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+		</div>
 		<table class="peers table-fixed w-auto border mx-4" v-if="props.content && props.content.row.length > 0">
 			<thead class="bg-gray-200">
 				<tr class="border border-gray-400">
@@ -16,6 +25,7 @@
 			</tbody>
 		</table>
 		<div class="editor" v-html="props.content.htmlNotes" />
+	</div>
 
 </template>
 <style>

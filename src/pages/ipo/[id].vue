@@ -428,12 +428,19 @@ onMounted(async() => {
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-else-if="new Date(ipo.close_date) < today">
 			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Basis of Allotment</h3>
-
 		</div>
 	</div>
 
 		<div v-if="ipo.about_html">
-			<h3 class="mb-3 text-xl text-gray-800 animate">About Company</h3>
+			<h1 class="mt-5 ml-5 text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+                    About Company
+		</h1>
+
+		<div class="flex mx-auto ml-5 mt-2 mb-5">
+			<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+		</div>
 			<div  class="wp-style p-2 m-3" v-html="ipo.about_html"></div>
 		</div>
 	  	<CompInfo :id="ipoId" v-else />
@@ -446,8 +453,6 @@ onMounted(async() => {
 </div>
 </template>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa&family=Crimson+Text:ital@0;1&family=Satisfy&display=swap');
-
 .wp-style{
   color: #222;
   font-family: 'Open Sans', sans-serif;

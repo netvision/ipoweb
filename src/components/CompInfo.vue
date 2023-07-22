@@ -16,8 +16,16 @@ const formatDate = (d) => {
 }
 </script>
 <template>
-	<div v-if="compInfo && compInfo[0]">
-		<h3 class="mb-3 mt-5 text-2xl text-gray-800 animate">Company Information</h3>
+	<div v-if="compInfo && compInfo[0]" class="px-5 bg-gradient-to-b from-orange-200  to-orange-100">
+		<h1 class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+                    Company Information
+		</h1>
+
+		<div class="flex mx-auto mt-1">
+			<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
+			<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+		</div>
 		<div class="grid grid-cols-1 md:grid-cols-3 md:gap-5">
 			<div>
 				<div class="m-3 shadow-dark-300">
@@ -27,13 +35,13 @@ const formatDate = (d) => {
 				</div>
 				<CompHistory :id="props.id" />
 				<div class="m-3 shadow-dark-300">
-					<h3 class="text-lg font-sans font-bold">Company Secretary</h3>
+					<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Company Secretary</h3>
 					<p class="font-bold">{{ compInfo[0].cs_name }}</p>
 					<p><span v-if="compInfo[0].cs_phone">Phone: {{ compInfo[0].cs_phone }}</span></p>
 					<p><span v-if="compInfo[0].cs_email">Email: {{ compInfo[0].cs_email }}</span></p>
 				</div>
 				<div class="m-3 shadow-dark-300">
-					<h3 class="text-lg font-sans font-bold">Registered Office</h3>
+					<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Registered Office</h3>
 					<p>{{ compInfo[0].reg_office_address }}</p>
 					<p>{{ compInfo[0].reg_office_city }}<span v-if="compInfo[0].reg_office_pin"> - {{ compInfo[0].reg_office_pin }}</span></p>
 					<p>{{ compInfo[0].reg_office_state }}</p>
@@ -42,7 +50,7 @@ const formatDate = (d) => {
 					<p v-if="compInfo[0].email">Email: {{ compInfo[0].email }}</p>
 				</div>
 				<div v-if="compInfo[0].corp_office_city" class="m-3 shadow-dark-300">
-					<h3 class="text-lg font-sans font-bold">Corporate Office</h3>
+					<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Corporate Office</h3>
 					<p>{{ compInfo[0].corp_office_address }}</p>
 					<p>{{ compInfo[0].corp_office_city }}<span v-if="compInfo[0].corp_office_pin"> - {{ compInfo[0].reg_office_pin }}</span></p>
 					<p>{{ compInfo[0].corp_office_state }}</p>
@@ -50,9 +58,9 @@ const formatDate = (d) => {
 
 			</div>
 			<div class="col-span-2">
-				<h3 class="text-xl font-sans font-bold">Brief Intro</h3>
+				<h3 class="text-xl font-bold font-['Lugrasimo'] text-orange-800">Brief Intro</h3>
 				<div class="editor" v-html="compInfo[0].brief_intro_html" />
-				<h3 class="text-xl font-sans font-bold mt-3" v-if="compInfo[0].business_info">Business</h3>
+				<h3 class="text-xl font-sans font-bold mt-3 font-['Lugrasimo'] text-orange-800" v-if="compInfo[0].business_info">Business</h3>
 				<div class="editor" v-html="compInfo[0].business_info" />
 
 				<CompClients :id="props.id" />
@@ -70,11 +78,14 @@ const formatDate = (d) => {
 </template>
 <style>
 .editor ol {
+	margin: 5px 10px 0 10px;
 	list-style: inside decimal;
-	@apply divide-blue-100 divide-y-2 gap-5;
+	@apply divide-blue-100 divide-y gap-5 text-justify;
 }
 .editor ul {
+	margin-left: 10px;
 	list-style: inside disc;
+	@apply divide-blue-100 divide-y gap-9;
 }
 
 </style>
