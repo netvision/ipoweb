@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@tailwindcss/aspect-ratio':
     specifier: ^0.4.0
@@ -20,8 +24,8 @@ dependencies:
     specifier: ^8.9.3
     version: 8.9.3(vue@3.3.4)
   '@vueuse/head':
-    specifier: ^0.7.6
-    version: 0.7.6(vue@3.3.4)
+    specifier: ^0.7.13
+    version: 0.7.13(vue@3.3.4)
   autoprefixer:
     specifier: ^10.4.7
     version: 10.4.7(postcss@8.4.26)
@@ -113,7 +117,7 @@ devDependencies:
     version: 0.2.0(@vue/compiler-sfc@3.2.37)(vue@3.3.4)
   vite-ssg:
     specifier: ^0.20.2
-    version: 0.20.2(@vueuse/head@0.7.6)(critters@0.0.16)(vite@3.0.0)(vue-router@4.1.2)(vue@3.3.4)
+    version: 0.20.2(@vueuse/head@0.7.13)(critters@0.0.16)(vite@3.0.0)(vue-router@4.1.2)(vue@3.3.4)
   vite-ssg-sitemap:
     specifier: ^0.3.2
     version: 0.3.2
@@ -1456,8 +1460,8 @@ packages:
     engines: {node: '>= 16'}
     dev: true
 
-  /@intlify/shared@9.3.0-beta.24:
-    resolution: {integrity: sha512-AKxJ8s7eKIQWkNaf4wyyoLRwf4puCuQgjSChlDJm5JBEt6T8HGgnYTJLRXu6LD/JACn3Qwu6hM/XRX1c9yvjmQ==}
+  /@intlify/shared@9.3.0-beta.25:
+    resolution: {integrity: sha512-Zg+ECV9RPdp227tCJOgvPb+S3i651nf4kKHsMojSyWCppVK/4NFuDrBG2lIQSQL6Iq5LKVr5MkezHCW2NBTQRg==}
     engines: {node: '>= 16'}
     dev: true
 
@@ -1477,7 +1481,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 7.0.0(vue-i18n@9.1.10)
-      '@intlify/shared': 9.3.0-beta.24
+      '@intlify/shared': 9.3.0-beta.25
       '@rollup/pluginutils': 4.2.1
       debug: 4.3.4
       fast-glob: 3.2.11
@@ -1919,12 +1923,15 @@ packages:
       - vue
     dev: false
 
-  /@vueuse/head@0.7.6(vue@3.3.4):
-    resolution: {integrity: sha512-cOWqCkT3WiF5oEpw+VVEWUJd9RLD5rc7DmnFp3cePsejp+t7686uKD9Z9ZU7Twb7R/BI8iexKTmXo9D/F3v6UA==}
+  /@vueuse/head@0.7.13(vue@3.3.4):
+    resolution: {integrity: sha512-VHSla/0uOAUii/mz+NWLFKMrMbz/lQoYxEcpS/ri7drepYjdB5QdbTnD2KdOX8EmQM/b07qpjKanr7erGrd3XA==}
     peerDependencies:
-      vue: '>=3'
+      vue: '>=2.7 || >=3'
     dependencies:
+      '@zhead/schema-vue': 0.7.4(vue@3.3.4)
       vue: 3.3.4
+    transitivePeerDependencies:
+      - '@vue/composition-api'
 
   /@vueuse/metadata@8.9.3:
     resolution: {integrity: sha512-57gZZKtWAmcJaUBmciCohvmumVLz4+FnoVnWj7U5BWs5PC2/7gU9Z0/i1i9leDNeboAauFzAq7z1GjS8eYnT+w==}
@@ -1954,7 +1961,20 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: false
+
+  /@zhead/schema-vue@0.7.4(vue@3.3.4):
+    resolution: {integrity: sha512-Q7wPUly3ZWbPYQ5SEJBUuD6Mw3wiUfPMPquGfqsR2KF6sxQKRF8oaHnRLuu2uxpjuXjkzpBlZBPu1JgQX+Lf6Q==}
+    peerDependencies:
+      vue: '>=2.7 || >=3'
+    dependencies:
+      '@vueuse/shared': 9.3.0(vue@3.3.4)
+      '@zhead/schema': 0.7.4
+      vue: 3.3.4
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
+  /@zhead/schema@0.7.4:
+    resolution: {integrity: sha512-18gfgmZL8gM64JdcT11d1rYLnCaY2mOtbDDSAXtCySanPGpkA1r+w01LCssEI/OfLdoZPS/kYCIW09d1PmUFfQ==}
 
   /abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -4943,7 +4963,7 @@ packages:
   /strip-literal@0.4.0:
     resolution: {integrity: sha512-ql/sBDoJOybTKSIOWrrh8kgUEMjXMwRAkZTD0EwiwxQH/6tTPkZvMIEjp0CRlpi6V5FMiJyvxeRkEi1KrGISoA==}
     dependencies:
-      acorn: 8.7.1
+      acorn: 8.10.0
     dev: true
 
   /supports-color@5.5.0:
@@ -5463,7 +5483,7 @@ packages:
     resolution: {integrity: sha512-udsHc11VYQLSy/Zy6efKHnU/ABozGUz84Z9GqmrD8MaB2HCezqFVFAJukwZaxBzcEjy1jFXfNCIcT8J6LefpWw==}
     dev: true
 
-  /vite-ssg@0.20.2(@vueuse/head@0.7.6)(critters@0.0.16)(vite@3.0.0)(vue-router@4.1.2)(vue@3.3.4):
+  /vite-ssg@0.20.2(@vueuse/head@0.7.13)(critters@0.0.16)(vite@3.0.0)(vue-router@4.1.2)(vue@3.3.4):
     resolution: {integrity: sha512-XtBgJEDrN9cL6pgzXvThrTS7Pm5zwZZnBt50EmL/O+QbdhD/ZjCbcp4GmIrWFBWjVBFcgfwgPccmWv3DAF6s/w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
@@ -5477,7 +5497,7 @@ packages:
       critters:
         optional: true
     dependencies:
-      '@vueuse/head': 0.7.6(vue@3.3.4)
+      '@vueuse/head': 0.7.13(vue@3.3.4)
       critters: 0.0.16
       fs-extra: 10.1.0
       html-minifier: 4.0.0
@@ -5793,6 +5813,7 @@ packages:
 
   /workbox-cacheable-response@6.6.0:
     resolution: {integrity: sha512-JfhJUSQDwsF1Xv3EV1vWzSsCOZn4mQ38bWEBR3LdvOxSPgB65gAM6cS2CX8rkkKHRgiLrN7Wxoyu+TuH67kHrw==}
+    deprecated: workbox-background-sync@6.6.0
     dependencies:
       workbox-core: 6.6.0
     dev: true
