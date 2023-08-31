@@ -1,7 +1,7 @@
 {
 	"name": "ipoinbox",
 	"description": "Unboxing the treasure of IPOs",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"main": "src/main.ts",
 	"repository": {
 		"type": "git",

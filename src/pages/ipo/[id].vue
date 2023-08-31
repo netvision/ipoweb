@@ -13,6 +13,7 @@ const subscriptions = ref([])
 const today = new Date()
 const listing_data = ref({})
 const activeTab = ref()
+const minInvCat = ref()
 const activeExch = ref()
 useHead({
 	title: title.value
@@ -38,30 +39,7 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
-	activeTab.value = formatDate(ipo.value.open_date)
-	if(ipo.value.ipo_type != 'SME'){
-		let amt = ipo.value.lot_size * ipo.value.price_band_high
-		minInvstment.value = [
-			{
-				category: 'Retail',
-				lots: 1,
-				shares: ipo.value.lot_size,
-				amt: amt
-			},
-			{
-				category: 'sHNI',
-				lots: Math.ceil(200000 / amt),
-				shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
-				amt:  Math.ceil(200000 / amt) * amt,
-			},
-			{
-				category: 'bHNI',
-				lots: Math.ceil(1000000 / amt),
-				shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
-				amt:  Math.ceil(1000000 / amt) * amt,
-			}
-		]
-	}
+
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 	totalOffer.value = total
 	let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
@@ -79,10 +57,40 @@ onMounted(async() => {
 			}
     	})
   	}
+	console.log(quotas.value)
+
+	  if(ipo.value.ipo_type != 'SME' && quotas.value.length > 0) {
+		let amt = ipo.value.lot_size * ipo.value.price_band_high
+		minInvstment.value = [
+			{
+				category: 'Retail',
+				lots: 1,
+				shares: ipo.value.lot_size,
+				amt: amt,
+				app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0].quota / ipo.value.lot_size)
+			},
+			{
+				category: 'Small HNI',
+				lots: Math.ceil(200000 / amt),
+				shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
+				amt:  Math.ceil(200000 / amt) * amt,
+				app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+			},
+			{
+				category: 'Big HNI',
+				lots: Math.ceil(1000000 / amt),
+				shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
+				amt:  Math.ceil(1000000 / amt) * amt,
+				app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
+			}
+		]
+		minInvCat.value = 'Retail'
+	}
 
 	  if(today >= new Date(ipo.value.open_date)){
 		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
-		let subs = logs.reduce((group, item) => {
+		if(logs.length > 0){
+			let subs = logs.reduce((group, item) => {
 			const key = item.day;
 			if(!group[key]){
 				group[key] = {
@@ -95,14 +103,14 @@ onMounted(async() => {
 			group[key].totalSubscriptions += item.subscription;
 			return group
 		}, {})
-		console.log(subs)
+		activeTab.value = formatDate(Object.keys(subs).slice(-1))
 		Object.values(subs).forEach(v => {
 			if(v.items.filter(u => u.subscription > 0).length > 0){
 				let items = v.items.sort((a,b) => a.cat.cat_order - b.cat.cat_order)
 				subscriptions.value.push({items: items, totalsubs: v.totalSubscriptions})
 			}
 		})
-		console.log(subscriptions.value)
+		}
 	  }
 	  else console.log("Issue is not open yet")
 
@@ -172,8 +180,28 @@ onMounted(async() => {
 		</div>
 
 	 <div class="grid grid-cols-1 md:flex md:gap-4 m-3">
+		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
+			<h3 class="text-xl text-gray-800 animate-typing font-[Comfortaa]">Minimum Investment</h3>
+			<Tabs variant="underline" v-model="minInvCat" class="p-5">
+				<Tab v-for="(min, i) in minInvstment" :key="i" :name="min.category" :title="min.category">
+					<table class="table-fixed">
+						<tr class="border border-gray-100">
+							<td class="p-2">No. of Lots:</td><td class="p-2">{{ min.lots }}</td>
+						</tr>
+						<tr class="border border-gray-100">
+							<td class="p-2">No. of Shares:</td><td class="p-2">{{ min.shares }}</td>
+						</tr>
+						<tr class="border border-gray-100">
+							<td class="p-2">Amount:</td><td class="p-2">{{ min.amt }}</td>
+						</tr>
+						<tr class="border border-gray-100">
+							<td class="p-2">Available Applications:</td><td class="p-2">{{ min.app }}</td>
+						</tr>
+					</table>
+				</Tab>
+			</Tabs>
+		</div>
 
-		<IpoObjects :id="ipoId" />
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
 			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Categories Quota and Discount</h3>
 			<table class="table-fixed w-full border">
