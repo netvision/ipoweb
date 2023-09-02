@@ -81,7 +81,7 @@ onMounted(async() => {
 				lots: Math.ceil(1000000 / amt),
 				shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
 				amt:  Math.ceil(1000000 / amt) * amt,
-				app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
+				app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
 			}
 		]
 		minInvCat.value = 'Retail'
