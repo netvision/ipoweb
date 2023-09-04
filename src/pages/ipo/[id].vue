@@ -49,17 +49,16 @@ onMounted(async() => {
     }, total)
 
 	if(res.length > 0) {
-	res.sort((a,b) => a.cat.cat_order - b.cat.cat_order)
-    quotas.value = res.filter(qt => qt.quota > 0).map(cat => {
-      let perc = (![4,5,7].includes(cat.cat_id) && net > 0) ? cat.quota * 100 / net: 0
+		res.sort((a,b) => a.cat.cat_order - b.cat.cat_order)
+		console.log(net)
+		quotas.value = res.filter(qt => qt.quota > 0).map(cat => {
+		let perc = (![4,5,7].includes(cat.cat_id) && net > 0) ? cat.quota * 100 / net: 0
 		return{
 			...cat,
 			perc: (perc > 0) ? perc.toFixed(2)+'%' : ''
 			}
-    	})
+		})
   	}
-	console.log(quotas.value)
-
 	  if(quotas.value.length > 0) {
 		let amt = ipo.value.lot_size * ipo.value.price_band_high
 		if(ipo.value.ipo_type != 'SME'){
@@ -83,7 +82,7 @@ onMounted(async() => {
 					lots: Math.ceil(1000000 / amt),
 					shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
 					amt:  Math.ceil(1000000 / amt) * amt,
-					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
 				}
 			]
 		}
@@ -107,7 +106,7 @@ onMounted(async() => {
 		}
 		minInvCat.value = 'Retail'
 	}
-
+	console.log(minInvstment.value)
 	  if(today >= new Date(ipo.value.open_date)){
 		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
 		if(logs.length > 0){
@@ -201,7 +200,7 @@ onMounted(async() => {
 		</div>
 
 	 <div class="grid grid-cols-1 md:flex md:gap-4 m-3">
-		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
+		<div v-if="minInvstment.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
 			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Minimum Investment</h3>
 			<Tabs variant="underline" v-model="minInvCat" class="p-5">
 				<Tab v-for="(min, i) in minInvstment" :key="i" :name="min.category" :title="min.category">
