@@ -23,7 +23,7 @@ getObjects()
 <template>
 
 	<div v-if="objects.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
-	<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-500 to-purple-500 text-transparent bg-clip-text">Objects of the IPO</h3>
+	<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Objects of the IPO</h3>
 
     <table class="table-fixed w-full border">
 		<thead class="bg-orange-200">

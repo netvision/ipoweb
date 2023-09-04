@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Anchors: typeof import('./src/components/Anchors.vue')['default']
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
     CompClients: typeof import('./src/components/CompClients.vue')['default']
     CompFinancials: typeof import('./src/components/CompFinancials.vue')['default']

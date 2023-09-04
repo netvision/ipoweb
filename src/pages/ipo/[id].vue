@@ -2,7 +2,7 @@
 import axios from 'axios';
 import slider from "vue3-slider"
 import { useRoute } from 'vue-router'
-import { Tabs, Tab } from 'flowbite-vue';
+import { Tabs, Tab, Modal } from 'flowbite-vue';
 const route = useRoute();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
@@ -15,14 +15,15 @@ const listing_data = ref({})
 const activeTab = ref()
 const minInvCat = ref()
 const activeExch = ref()
+const anchorModal = ref(false)
+const showAnchors = () => anchorModal.value = "true"
+const hideAnchors = () => anchorModal.value = "false"
 useHead({
 	title: title.value
 })
 
 const formatDate = (d) => {
 	const date = new Date(d);
-	//console.log(date)
-                // Then specify how you want your dates to be formatted
     return new Intl.DateTimeFormat('default', {dateStyle: 'long'}).format(date);
 }
 
@@ -59,31 +60,51 @@ onMounted(async() => {
   	}
 	console.log(quotas.value)
 
-	  if(ipo.value.ipo_type != 'SME' && quotas.value.length > 0) {
+	  if(quotas.value.length > 0) {
 		let amt = ipo.value.lot_size * ipo.value.price_band_high
-		minInvstment.value = [
-			{
-				category: 'Retail',
-				lots: 1,
-				shares: ipo.value.lot_size,
-				amt: amt,
-				app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0].quota / ipo.value.lot_size)
-			},
-			{
-				category: 'Small HNI',
-				lots: Math.ceil(200000 / amt),
-				shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
-				amt:  Math.ceil(200000 / amt) * amt,
-				app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
-			},
-			{
-				category: 'Big HNI',
-				lots: Math.ceil(1000000 / amt),
-				shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
-				amt:  Math.ceil(1000000 / amt) * amt,
-				app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
-			}
-		]
+		if(ipo.value.ipo_type != 'SME'){
+			minInvstment.value = [
+				{
+					category: 'Retail',
+					lots: 1,
+					shares: ipo.value.lot_size,
+					amt: amt,
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0].quota / ipo.value.lot_size)
+				},
+				{
+					category: 'Small HNI',
+					lots: Math.ceil(200000 / amt),
+					shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
+					amt:  Math.ceil(200000 / amt) * amt,
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+				},
+				{
+					category: 'Big HNI',
+					lots: Math.ceil(1000000 / amt),
+					shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
+					amt:  Math.ceil(1000000 / amt) * amt,
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(1000000 / amt) * ipo.value.lot_size))
+				}
+			]
+		}
+		else{
+			minInvstment.value = [
+				{
+					category: 'Retail',
+					lots: 1,
+					shares: ipo.value.lot_size,
+					amt: amt,
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0].quota / ipo.value.lot_size)
+				},
+				{
+					category: 'HNI',
+					lots: Math.ceil(200000 / amt),
+					shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
+					amt:  Math.ceil(200000 / amt) * amt,
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+				},
+			]
+		}
 		minInvCat.value = 'Retail'
 	}
 
@@ -181,7 +202,7 @@ onMounted(async() => {
 
 	 <div class="grid grid-cols-1 md:flex md:gap-4 m-3">
 		<div v-if="subscriptions.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
-			<h3 class="text-xl text-gray-800 animate-typing font-[Comfortaa]">Minimum Investment</h3>
+			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Minimum Investment</h3>
 			<Tabs variant="underline" v-model="minInvCat" class="p-5">
 				<Tab v-for="(min, i) in minInvstment" :key="i" :name="min.category" :title="min.category">
 					<table class="table-fixed">
@@ -192,7 +213,7 @@ onMounted(async() => {
 							<td class="p-2">No. of Shares:</td><td class="p-2">{{ min.shares }}</td>
 						</tr>
 						<tr class="border border-gray-100">
-							<td class="p-2">Amount:</td><td class="p-2">{{ min.amt }}</td>
+							<td class="p-2">Amount:</td><td class="p-2">&#8377;{{ min.amt }}</td>
 						</tr>
 						<tr class="border border-gray-100">
 							<td class="p-2">Available Applications:</td><td class="p-2">{{ min.app }}</td>
@@ -214,7 +235,21 @@ onMounted(async() => {
 				</thead>
 				<tbody>
 					<tr v-for="quota in quotas" :key="quota.id">
-						<td class="border border-gray-100 p-2">{{ quota.cat.short_name }}</td>
+						<td class="border border-gray-100 p-2">
+							{{ quota.cat.short_name }}
+							<button @click="showAnchors" v-if="quota.cat.id === 6" type="button" class="font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+								<svg class="w-4 h-4 text-gray-800 dark:text-white hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+									<path d="M17 0h-5.768a1 1 0 1 0 0 2h3.354L8.4 8.182A1.003 1.003 0 1 0 9.818 9.6L16 3.414v3.354a1 1 0 0 0 2 0V1a1 1 0 0 0-1-1Z"/>
+									<path d="m14.258 7.985-3.025 3.025A3 3 0 1 1 6.99 6.768l3.026-3.026A3.01 3.01 0 0 1 8.411 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V9.589a3.011 3.011 0 0 1-1.742-1.604Z"/>
+								</svg>
+							</button>
+							<Modal v-if="anchorModal && quota.cat.id === 6" size="3xl" @close="() => anchorModal = false" :escapable="true">
+
+								<template #body>
+									<Anchors :ipo_id="ipoId" :quota="quota.quota" />
+								</template>
+							</Modal>
+						</td>
 						<td class="border border-gray-100 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: &#8377;{{ quota.discount }}</span></td>
 						<td class="border border-gray-100 p-2">&#8377; {{ amtInCr(quota.quota * (ipo.price_band_high - +quota.discount)) }} Cr.</td>
 					</tr>
@@ -477,7 +512,7 @@ onMounted(async() => {
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
 
-	<Footer />
+
 </div>
 </template>
 <style>

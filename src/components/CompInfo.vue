@@ -1,10 +1,11 @@
 <script setup>
 import axios from 'axios';
+import IpoObjects from './IpoObjects.vue';
 const props = defineProps(['id'])
 const compInfo = ref()
 const getInfo = async() => {
 	let info = await axios.get('https://droplet.netserve.in/comp-info?filter[ipoId][eq]='+props.id).then(r => r.data)
-	console.log(info)
+	//console.log(info)
 	compInfo.value = info
 }
 getInfo()
@@ -17,22 +18,10 @@ const formatDate = (d) => {
 </script>
 <template>
 	<div v-if="compInfo && compInfo[0]" class="px-5 bg-gradient-to-b from-orange-200  to-orange-100">
-		<h1 class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
-                    Company Information
-		</h1>
 
-		<div class="flex mx-auto mt-1">
-			<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
-			<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
-			<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
-		</div>
 		<div class="grid grid-cols-1 md:grid-cols-3 md:gap-5">
 			<div>
-				<div class="m-3 shadow-dark-300">
-					<p class="font-bold" v-if="compInfo[0].date_of_inc">Date of Inc.: {{ formatDate(compInfo[0].date_of_inc) }}</p>
-					<p class="font-bold" v-if="compInfo[0].reg_no">Reg. No.: {{ compInfo[0].reg_no }}</p>
-					<p class="font-bold"><span v-if="compInfo[0].cin">CIN: {{ compInfo[0].cin }}</span></p>
-				</div>
+				<IpoObjects :id="props.id" />
 				<CompHistory :id="props.id" />
 				<div class="m-3 shadow-dark-300">
 					<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Company Secretary</h3>
@@ -58,6 +47,20 @@ const formatDate = (d) => {
 
 			</div>
 			<div class="col-span-2">
+				<h1 class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+                    Company Information
+				</h1>
+
+				<div class="flex mx-auto mt-1 mb-3">
+					<span class="inline-block w-40 h-1 bg-blue-500 rounded-full"></span>
+					<span class="inline-block w-3 h-1 mx-1 bg-blue-500 rounded-full"></span>
+					<span class="inline-block w-1 h-1 bg-blue-500 rounded-full"></span>
+				</div>
+				<div class="m-3 shadow-dark-300">
+					<p class="font-bold" v-if="compInfo[0].date_of_inc">Date of Inc.: {{ formatDate(compInfo[0].date_of_inc) }}</p>
+					<p class="font-bold" v-if="compInfo[0].reg_no">Reg. No.: {{ compInfo[0].reg_no }}</p>
+					<p class="font-bold"><span v-if="compInfo[0].cin">CIN: {{ compInfo[0].cin }}</span></p>
+				</div>
 				<h3 class="text-xl font-bold font-['Lugrasimo'] text-orange-800">Brief Intro</h3>
 				<div class="editor" v-html="compInfo[0].brief_intro_html" />
 				<h3 class="text-xl font-sans font-bold mt-3 font-['Lugrasimo'] text-orange-800" v-if="compInfo[0].business_info">Business</h3>
