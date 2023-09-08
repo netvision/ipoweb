@@ -202,24 +202,27 @@ onMounted(async() => {
 	 <div class="grid grid-cols-1 md:flex md:gap-4 m-3">
 		<div v-if="minInvstment.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg">
 			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Minimum Investment</h3>
-			<Tabs variant="underline" v-model="minInvCat" class="p-5">
-				<Tab v-for="(min, i) in minInvstment" :key="i" :name="min.category" :title="min.category">
-					<table class="table-fixed">
-						<tr class="border border-gray-100">
-							<td class="p-2">No. of Lots:</td><td class="p-2">{{ min.lots }}</td>
-						</tr>
-						<tr class="border border-gray-100">
-							<td class="p-2">No. of Shares:</td><td class="p-2">{{ min.shares }}</td>
-						</tr>
-						<tr class="border border-gray-100">
-							<td class="p-2">Amount:</td><td class="p-2">&#8377;{{ min.amt }}</td>
-						</tr>
-						<tr class="border border-gray-100">
-							<td class="p-2">Available Applications:</td><td class="p-2">{{ min.app }}</td>
-						</tr>
-					</table>
-				</Tab>
-			</Tabs>
+			<table class="table-fixed border">
+				<thead class="bg-orange-200">
+					<tr class="border border-gray-100">
+						<th class="border border-gray-100 text-left p-2">Category</th>
+						<th class="border border-gray-100 p-2">Lots</th>
+						<th class="border border-gray-100 p-2">Shares</th>
+						<th class="border border-gray-100 p-2">Amount</th>
+						<th class="border border-gray-100 p-2">Avail. Apllications</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="min in minInvstment" :key="min.id">
+						<td class="border border-gray-100 p-2">{{ min.category }}</td>
+						<td class="border border-gray-100 p-2">{{ min.lots }}</td>
+						<td class="border border-gray-100 p-2">{{ min.shares }}</td>
+						<td class="border border-gray-100 p-2">{{ min.amt }}</td>
+						<td class="border border-gray-100 p-2">{{ min.app }}</td>
+					</tr>
+				</tbody>
+			</table>
+
 		</div>
 
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
