@@ -193,8 +193,8 @@ onMounted(async() => {
 						</li>
 						<li v-if="ipo.issue_size" class="border-b-1 border-orange-400 p-2">
 							<h4 class="italic">Issue Size: <span>&#8377; {{ ipo.issue_size }} Cr.</span></h4>
-							<p class="font-semibold"><span v-if="ipo.fresh_issue">Fresh: {{ ipo.fresh_issue }} Shares (&#8377; {{ amtInCr(ipo.fresh_issue * ipo.price_band_high) }} Cr.)</span></p>
-							<p class="font-semibold"><span v-if="ipo.offer_for_sale">OFS: {{ ipo.offer_for_sale }} Shares (&#8377; {{ amtInCr(ipo.offer_for_sale * ipo.price_band_high) }} Cr.)</span></p>
+							<p class="font-semibold"><span v-if="ipo.fresh_issue">Fresh: {{ ipo.fresh_issue.toLocaleString('en-IN') }} Shares (&#8377; {{ amtInCr(ipo.fresh_issue * ipo.price_band_high) }} Cr.)</span></p>
+							<p class="font-semibold"><span v-if="ipo.offer_for_sale">OFS: {{ ipo.offer_for_sale.toLocaleString('en-IN') }} Shares (&#8377; {{ amtInCr(ipo.offer_for_sale * ipo.price_band_high) }} Cr.)</span></p>
 						</li>
 					</ul>
 		</div>
@@ -214,11 +214,11 @@ onMounted(async() => {
 				</thead>
 				<tbody>
 					<tr v-for="min in minInvstment" :key="min.id">
-						<td class="border border-gray-100 p-2">{{ min.category }}</td>
-						<td class="border border-gray-100 p-2">{{ min.lots }}</td>
-						<td class="border border-gray-100 p-2">{{ min.shares }}</td>
-						<td class="border border-gray-100 p-2">{{ min.amt }}</td>
-						<td class="border border-gray-100 p-2">{{ min.app }}</td>
+						<td class="border border-gray-100 p-2 text-center">{{ min.category }}</td>
+						<td class="border border-gray-100 p-2 text-center">{{ min.lots }}</td>
+						<td class="border border-gray-100 p-2 text-center">{{ min.shares.toLocaleString('en-IN') }}</td>
+						<td class="border border-gray-100 p-2 text-center">{{ min.amt.toLocaleString('en-IN') }}</td>
+						<td class="border border-gray-100 p-2 text-center">{{ min.app.toLocaleString('en-IN') }}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -227,7 +227,7 @@ onMounted(async() => {
 
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
 			<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">Categories Quota and Discount</h3>
-			<table class="table-fixed w-full border">
+			<table class="w-full border">
 				<thead class="bg-orange-200">
 					<tr class="border border-gray-100">
 						<th class="border border-gray-100 text-left p-2">Category</th>
@@ -239,12 +239,16 @@ onMounted(async() => {
 					<tr v-for="quota in quotas" :key="quota.id">
 						<td class="border border-gray-100 p-2">
 							{{ quota.cat.short_name }}
+
 							<button @click="showAnchors" v-if="quota.cat.id === 6" type="button" class="font-medium rounded-lg text-sm px-5 py-2.5 text-center">
 								<svg class="w-4 h-4 text-gray-800 dark:text-white hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
 									<path d="M17 0h-5.768a1 1 0 1 0 0 2h3.354L8.4 8.182A1.003 1.003 0 1 0 9.818 9.6L16 3.414v3.354a1 1 0 0 0 2 0V1a1 1 0 0 0-1-1Z"/>
 									<path d="m14.258 7.985-3.025 3.025A3 3 0 1 1 6.99 6.768l3.026-3.026A3.01 3.01 0 0 1 8.411 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V9.589a3.011 3.011 0 0 1-1.742-1.604Z"/>
 								</svg>
 							</button>
+							<a :href="ipo.anchors_pdf" target="_blank" v-if="quota.cat.id === 6" class="font-medium rounded-lg text-sm text-center inline-block">
+								<svg class="w-4 h-4 text-gray-800 dark:text-white hover:text-blue-500" aria-hidden="true" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>click to download PDF</title><path d="M23.63 15.3c-.71-.745-2.166-1.17-4.224-1.17-1.1 0-2.377.106-3.761.354a19.443 19.443 0 0 1-2.307-2.661c-.532-.71-.994-1.49-1.42-2.236.817-2.484 1.207-4.507 1.207-5.962 0-1.632-.603-3.336-2.342-3.336-.532 0-1.065.32-1.349.781-.78 1.384-.425 4.4.923 7.381a60.277 60.277 0 0 1-1.703 4.507c-.568 1.349-1.207 2.733-1.917 4.01C2.834 18.53.314 20.34.03 21.758c-.106.533.071 1.03.462 1.42.142.107.639.533 1.49.533 2.59 0 5.323-4.188 6.707-6.707 1.065-.355 2.13-.71 3.194-.994a34.963 34.963 0 0 1 3.407-.745c2.732 2.448 5.145 2.839 6.352 2.839 1.49 0 2.023-.604 2.2-1.1.32-.64.106-1.349-.213-1.704zm-1.42 1.03c-.107.532-.64.887-1.384.887-.213 0-.39-.036-.604-.071-1.348-.32-2.626-.994-3.903-2.059a17.717 17.717 0 0 1 2.98-.248c.746 0 1.385.035 1.81.142.497.106 1.278.426 1.1 1.348zm-7.524-1.668a38.01 38.01 0 0 0-2.945.674 39.68 39.68 0 0 0-2.52.745 40.05 40.05 0 0 0 1.207-2.555c.426-.994.78-2.023 1.136-2.981.354.603.745 1.207 1.135 1.739a50.127 50.127 0 0 0 1.987 2.378zM10.038 1.46a.768.768 0 0 1 .674-.425c.745 0 .887.851.887 1.526 0 1.135-.355 2.874-.958 4.861-1.03-2.768-1.1-5.074-.603-5.962zM6.134 17.997c-1.81 2.981-3.549 4.826-4.613 4.826a.872.872 0 0 1-.532-.177c-.213-.213-.32-.461-.249-.745.213-1.065 2.271-2.555 5.394-3.904Z"/></svg>
+							</a>
 							<Modal v-if="anchorModal && quota.cat.id === 6" size="3xl" @close="() => anchorModal = false" :escapable="true">
 
 								<template #body>
@@ -252,7 +256,7 @@ onMounted(async() => {
 								</template>
 							</Modal>
 						</td>
-						<td class="border border-gray-100 p-2">{{ quota.quota }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: &#8377;{{ quota.discount }}</span></td>
+						<td class="border border-gray-100 p-2">{{ quota.quota.toLocaleString('en-IN') }} <span class="block text-sm italic" v-if="quota.perc">({{ quota.perc }})</span><span class="block text-sm italic" v-if="quota.discount">Discount: &#8377;{{ quota.discount }}</span></td>
 						<td class="border border-gray-100 p-2">&#8377; {{ amtInCr(quota.quota * (ipo.price_band_high - +quota.discount)) }} Cr.</td>
 					</tr>
 				</tbody>
@@ -306,12 +310,12 @@ onMounted(async() => {
 					<tbody>
 						<tr v-for="item in subs.items" :key="item.id">
 							<td class="border border-gray-400 p-2">{{ item.cat.short_name }}</td>
-							<td class="border border-gray-400 p-2">{{ item.subscription }} </td>
+							<td class="border border-gray-400 p-2">{{ item.subscription.toLocaleString('en-IN') }} </td>
 							<td class="border border-gray-400 p-2">{{ (item.subscription / item.quota).toFixed(2) }}x</td>
 						</tr>
 						<tr>
 							<td class="border border-gray-400 p-2 font-bold">Total</td>
-							<td class="border border-gray-400 p-2 font-bold">{{ subs.totalsubs }}</td>
+							<td class="border border-gray-400 p-2 font-bold">{{ subs.totalsubs.toLocaleString('en-IN') }}</td>
 							<td class="border border-gray-400 p-2 font-bold">{{ (subs.totalsubs / totalOffer).toFixed(2) }}x</td>
 						</tr>
 					</tbody>
@@ -349,21 +353,21 @@ onMounted(async() => {
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
          							<p class="text-base">Pre-open Volume</p>
-         							<p class="text-base font-semibold">{{ listing_data.nse?.preopen_volume ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.preopen_volume?.toLocaleString('en-IN') ?? 'NA' }} <span v-if="listing_data.nse?.preopen_volume && listing_data.nse?.free_float">({{ (listing_data.nse?.preopen_volume * 100 / listing_data.nse?.free_float).toFixed(2)  }}%)</span></p>
          						</div>
          						<div>
          							<p class="text-base">Volume</p>
-         							<p class="text-base font-semibold">{{ listing_data.nse?.volume ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.volume?.toLocaleString('en-IN') ?? 'NA' }}</p>
          						</div>
          					</div>
          					<div class="flex justify-between mt-2 pt-2 mb-2">
          						<div>
          							<p class="text-base">Delivery</p>
-         							<p class="text-base font-semibold">{{ listing_data.nse?.delivery ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.delivery?.toLocaleString('en-IN') ?? 'NA' }} <span v-if="listing_data.nse?.delivery && listing_data.nse?.volume">({{ (listing_data.nse?.delivery * 100 / listing_data.nse?.volume).toFixed(2)  }}%)</span></p>
          						</div>
          						<div>
          							<p class="text-base">Free Float</p>
-         							<p class="text-base font-semibold">{{ listing_data.nse?.free_float ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.nse?.free_float?.toLocaleString('en-IN') ?? 'NA' }}</p>
          						</div>
          					</div>
      </div>
