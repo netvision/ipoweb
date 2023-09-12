@@ -252,7 +252,7 @@ onMounted(async() => {
 							<Modal v-if="anchorModal && quota.cat.id === 6" size="3xl" @close="() => anchorModal = false" :escapable="true">
 
 								<template #body>
-									<Anchors :ipo_id="ipoId" :quota="quota.quota" />
+									<Anchors :ipo_id="ipoId" :quota="quota.quota" :price="ipo.price_band_high" />
 								</template>
 							</Modal>
 						</td>

@@ -1,19 +1,27 @@
 <script setup>
 import axios from 'axios';
 import { Tabs, Tab } from 'flowbite-vue';
-const props = defineProps(['ipo_id', 'quota'])
+const props = defineProps(['ipo_id', 'quota', 'price'])
 const anchors = ref([])
-const prefHolders = ref([])
 const activeTab = ref()
-console.log(props.quota)
+const amtInCr = (amt) => {
+	const croresValue = amt / 10000000;
+
+  // Round to 2 decimal places
+  const roundedValue = Math.round(croresValue * 100) / 100;
+
+  return roundedValue;
+}
 onMounted(() =>{
 	axios.get("https://droplet.netserve.in/ipo-anchor?ipo_id="+props.ipo_id+"&expand=anchor").then(r => {
 		anchors.value = r.data.map(a => ({
 			...a,
-			perc: (a.no_of_equity_shares * 100 / props.quota).toFixed(2) + '%'
+			perc: (a.no_of_equity_shares * 100 / props.quota).toFixed(2) + '%',
+			amt: amtInCr(a.no_of_equity_shares * props.price)
 		})).sort((a, b) => b.no_of_equity_shares - a.no_of_equity_shares)
 	})
 	activeTab.value = 'anchors'
+	console.log(anchors.value)
 })
 </script>
 <template>
@@ -25,6 +33,7 @@ onMounted(() =>{
 						<tr class="border border-gray-100">
 							<th class="border border-gray-100 text-left p-2">Name</th>
 							<th class="border border-gray-100 p-2">No. of Equity Shares</th>
+							<th class="border border-gray-100 p-2">Amt in Cr</th>
 							<th class="border border-gray-100 p-2">Percent of Quota</th>
 						</tr>
 					</thead>
@@ -32,6 +41,7 @@ onMounted(() =>{
 						<tr v-for="anc in anchors" :key="anc.id">
 							<td class="border border-gray-100 p-2">{{ anc.anchor.name }}</td>
 							<td class="border border-gray-100 p-2">{{ anc.no_of_equity_shares }}</td>
+							<td class="border border-gray-100 p-2">{{ anc.amt }}</td>
 							<td class="border border-gray-100 p-2">{{ anc.perc }}</td>
 						</tr>
 					</tbody>
