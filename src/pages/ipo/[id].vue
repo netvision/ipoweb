@@ -15,6 +15,7 @@ const listing_data = ref({})
 const activeTab = ref()
 const minInvCat = ref()
 const activeExch = ref()
+const activeLive = ref('NSE')
 const anchorModal = ref(false)
 const showAnchors = () => anchorModal.value = "true"
 const hideAnchors = () => anchorModal.value = "false"
@@ -399,21 +400,21 @@ onMounted(async() => {
          					<div class="flex justify-between mt-8 pt-2 mb-2">
          						<div>
          							<p class="text-base">Pre-open Volume</p>
-         							<p class="text-base font-semibold">{{ listing_data.bse?.preopen_volume ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.preopen_volume?.toLocaleString('en-IN') ?? 'NA' }} <span v-if="listing_data.bse?.preopen_volume && listing_data.bse?.free_float">({{ (listing_data.bse?.preopen_volume * 100 / listing_data.bse?.free_float).toFixed(2)  }}%)</span></p>
          						</div>
          						<div>
          							<p class="text-base">Volume</p>
-         							<p class="text-base font-semibold">{{ listing_data.bse?.volume ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.volume?.toLocaleString('en-IN') ?? 'NA' }}</p>
          						</div>
          					</div>
          					<div class="flex justify-between mt-2 pt-2 mb-2">
          						<div>
          							<p class="text-base">Delivery</p>
-         							<p class="text-base font-semibold">{{ listing_data.bse?.delivery ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.delivery?.toLocaleString('en-IN') ?? 'NA' }} <span v-if="listing_data.bse?.delivery && listing_data.bse?.volume">({{ (listing_data.bse?.delivery * 100 / listing_data.bse?.volume).toFixed(2)  }}%)</span></p>
          						</div>
          						<div>
          							<p class="text-base">Free Float</p>
-         							<p class="text-base font-semibold">{{ listing_data.bse?.free_float ?? 'NA' }}</p>
+         							<p class="text-base font-semibold">{{ listing_data.bse?.free_float?.toLocaleString('en-IN') ?? 'NA' }}</p>
          						</div>
          					</div>
      					</div>
@@ -422,7 +423,7 @@ onMounted(async() => {
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-if="listing_data.nse || listing_data.bse">
 			<h3 class="mb-3 text-xl text-gray-800 animate-typing font-[Comfortaa]">Current Status</h3>
-			<Tabs variant="underline" v-model="activeExch" class="py-2">
+			<Tabs variant="underline" v-model="activeLive" class="py-2">
 				<Tab v-if="listing_data.nse" name="NSE" title="NSE">
 					<div class="bg-orange-100 p-4 rounded-md">
          				<div class="flex justify-between border-b-2 border-gray-200 p-2">
@@ -465,6 +466,7 @@ onMounted(async() => {
          					</div>
 						</div>
 				</Tab>
+				<!--
 				<Tab v-if="listing_data.bse" name="BSE" title="BSE">
 					<div class="bg-orange-100 p-4 rounded-md">
          				<div class="flex justify-between border-b-2 border-gray-200 p-2">
@@ -488,11 +490,12 @@ onMounted(async() => {
          					</div>
          					<div class="px-6 mb-4" v-if="listing_data.bse?.live?.Header">
 								<slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
-								<!-- <Slider v-model="listing_data.bse.live.Header.LTP" :min="+listing_data.bse.live.Header.Low" :max="+listing_data.bse.live.Header.High" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
+
          					</div>
 
 						</div>
 				</Tab>
+				-->
 			</Tabs>
 		</div>
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg" v-else-if="new Date(ipo.close_date) < today">
