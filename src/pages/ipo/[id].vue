@@ -17,8 +17,11 @@ const minInvCat = ref()
 const activeExch = ref()
 const activeLive = ref('NSE')
 const anchorModal = ref(false)
+const brlms = ref()
 const showAnchors = () => anchorModal.value = "true"
-const hideAnchors = () => anchorModal.value = "false"
+//const hideAnchors = () => anchorModal.value = "false"
+const retrn = ref({})
+const mcap = ref({})
 useHead({
 	title: title.value
 })
@@ -41,7 +44,8 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
-
+	brlms.value = JSON.parse(ipo.value.brlms_json)
+	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 	totalOffer.value = total
 	let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
@@ -101,13 +105,13 @@ onMounted(async() => {
 					lots: Math.ceil(200000 / amt),
 					shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
 					amt:  Math.ceil(200000 / amt) * amt,
-					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / ipo.value.lot_size)
 				},
 			]
 		}
 		minInvCat.value = 'Retail'
 	}
-	console.log(minInvstment.value)
+	// console.log(minInvstment.value)
 	  if(today >= new Date(ipo.value.open_date)){
 		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
 		if(logs.length > 0){
@@ -142,10 +146,26 @@ onMounted(async() => {
 		if(listing_data.value.nse?.scrip_code != null){
 			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data)
 		}
+		/*
 		if(listing_data.value.bse?.scrip_code != null){
 			listing_data.value.bse.live = await axios.get('https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&seriesid=&scripcode='+listing_data.value.bse.scrip_code.trim()).then(r => r.data)
 		}
-		console.log(listing_data.value)
+		*/
+		//console.log(listing_data.value)
+		mcap.value.atListing = (listing_data.value.nse?.listing_price && ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * listing_data.value.nse?.listing_price / 10000000 ).toFixed(2) + 'Cr.' : 'NA'
+	  	mcap.value.current = (listing_data.value.nse?.live?.priceInfo.lastPrice && ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * listing_data.value.nse.live.priceInfo.lastPrice / 10000000 ).toFixed(2) + 'Cr.' : 'NA'
+
+		if(listing_data.value.nse?.live?.priceInfo.lastPrice){
+			let curDate = new Date()
+			let listingDate = new Date(ipo.value.listings[0].listing_date)
+			let duration = (curDate.getTime() - listingDate.getTime()) / (1000 * 3600 * 24 * 365)
+			let gain = Number(listing_data.value.nse?.live?.priceInfo.lastPrice) / Number(ipo.value.issue_price)
+			retrn.value.cagr = (duration >= 1) ? ((Math.pow(gain, 1/duration) - 1)*100).toFixed(2) + '%' : 'NA'
+			retrn.value.preturn = ((Number(listing_data.value.nse?.live?.priceInfo.lastPrice) - Number(ipo.value.issue_price)) * 100 / Number(ipo.value.issue_price)).toFixed(2)
+			retrn.value.allotReturn = ((Number(listing_data.value.nse?.live?.priceInfo.lastPrice) - Number(ipo.value.issue_price)) * ipo.value.lot_size).toFixed(2)
+			retrn.value.listingDay = ((listing_data.value.nse?.listing_price - ipo.value.issue_price) * ipo.value.lot_size).toFixed(2)
+			retrn.value.listingDayPer = ((listing_data.value.nse?.listing_price - ipo.value.issue_price) * 100 / ipo.value.issue_price).toFixed(2)
+		}
 	  }
 	  else console.log("the issue is not listed yet")
 
@@ -175,27 +195,39 @@ onMounted(async() => {
 						<li class="border-b-1 border-orange-400 p-2" v-if="ipo.open_date">
 							<h4 class="italic">Issue/Bids Opens</h4>
 							<p class="font-semibold">{{ formatDate(ipo.open_date) }}</p>
-						</li>
-						<li class="border-b-1 border-orange-400 p-2" v-if="ipo.close_date">
 							<h4 class="italic">Issue/Bids Closes</h4>
 							<p class="font-semibold">{{ formatDate(ipo.close_date) }}</p>
 						</li>
-						<li v-if="ipo.price_band_low" class="border-b-1 border-orange-400 p-2">
+						<li class="border-b-1 border-orange-400 p-2">
+							<div v-if="ipo.price_band_low">
 							<h4 class="italic">Price Band</h4>
 							<p class="font-semibold">&#8377;{{ ipo.price_band_low }} - &#8377;{{ ipo.price_band_high }}</p>
-						</li>
-						<li v-else class="border-b-1 border-orange-400 p-2">
+							</div>
+							<div v-else>
 							<h4 class="italic">Price</h4>
 							<p class="font-semibold">&#8377; {{ ipo.price_band_high }}</p>
-						</li>
-						<li class="border-b-1 border-orange-400 p-2">
+							</div>
+							<div>
 							<h4 class="italic">Lot Size and Amount</h4>
 							<p class="font-semibold">{{ ipo.lot_size }} Shares @ &#8377;{{ ipo.price_band_high * ipo.lot_size }}</p>
+							</div>
 						</li>
 						<li v-if="ipo.issue_size" class="border-b-1 border-orange-400 p-2">
 							<h4 class="italic">Issue Size: <span>&#8377; {{ ipo.issue_size }} Cr.</span></h4>
 							<p class="font-semibold"><span v-if="ipo.fresh_issue">Fresh: {{ ipo.fresh_issue.toLocaleString('en-IN') }} Shares (&#8377; {{ amtInCr(ipo.fresh_issue * ipo.price_band_high) }} Cr.)</span></p>
 							<p class="font-semibold"><span v-if="ipo.offer_for_sale">OFS: {{ ipo.offer_for_sale.toLocaleString('en-IN') }} Shares (&#8377; {{ amtInCr(ipo.offer_for_sale * ipo.price_band_high) }} Cr.)</span></p>
+						</li>
+						<li v-if="ipo.no_of_total_shares" class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Market Cap </h4>
+							<p class="font-semibold">Pre Listing: <span>&#8377; {{ mcap.atIpo }}</span></p>
+							<p class="font-semibold" v-if="mcap?.atListing && mcap?.atListing != 'NA'">Listing Day: <span>&#8377; {{ mcap?.atListing }}</span></p>
+							<p class="font-semibold" v-if="mcap?.current && mcap?.current != 'NA'">Current: <span>&#8377; {{ mcap?.current }}</span></p>
+						</li>
+						<li v-if="retrn.listingDay" class="border-b-1 border-orange-400 p-2">
+							<h4 class="italic">Return Calculations</h4>
+							<p>Listing Day: <span class="font-semibold">&#8377;{{ retrn.listingDay }} per Lot ({{ retrn.listingDayPer }}%)</span></p>
+							<p>Today: <span class="font-semibold">&#8377;{{ retrn.allotReturn }} per Lot ({{ retrn.preturn }}%)</span></p>
+							<p v-if="retrn.cagr !='NA'">CAGR: <span class="font-semibold">{{ retrn.cagr }}</span></p>
 						</li>
 					</ul>
 		</div>
@@ -223,7 +255,12 @@ onMounted(async() => {
 					</tr>
 				</tbody>
 			</table>
-
+			<div v-if="brlms.length > 0" class="mt-4">
+				<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">BRLMS</h3>
+				<ul class="mt-2">
+					<li v-for="brlm in brlms" :key="brlm.id" class="border-b-1 border-orange-400">{{ brlm.name }}</li>
+				</ul>
+			</div>
 		</div>
 
 		<div class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
