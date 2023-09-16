@@ -44,7 +44,7 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
-	brlms.value = JSON.parse(ipo.value.brlms_json)
+	brlms.value = JSON.parse(ipo.value?.brlms_json) ?? []
 	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 	totalOffer.value = total
