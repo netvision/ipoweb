@@ -1,9 +1,10 @@
 <script setup>
 import axios from 'axios';
 import slider from "vue3-slider"
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Tabs, Tab, Modal } from 'flowbite-vue';
 const route = useRoute();
+const router = useRouter();
 const ipoId = ref(route.params.id.split('-')[0]);
 const ipo = ref({})
 const title = ref(route.params.id.split('-')[1])
@@ -18,6 +19,11 @@ const activeExch = ref()
 const activeLive = ref('NSE')
 const anchorModal = ref(false)
 const brlms = ref()
+const pre = ref({})
+const next = ref({})
+const goTo = (ipo) => {
+		router.push(ipo.ipo_id+'-'+encodeURIComponent(ipo.company_name))
+	}
 const showAnchors = () => anchorModal.value = "true"
 //const hideAnchors = () => anchorModal.value = "false"
 const retrn = ref({})
@@ -44,6 +50,9 @@ const amtInCr = (amt) => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
+	let prenext = await axios.get('https://droplet.netserve.in/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
+	pre.value = prenext.pre[prenext.pre.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
+	next.value = prenext.next[prenext.next.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	brlms.value = JSON.parse(ipo.value?.brlms_json) ?? []
 	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
@@ -172,6 +181,17 @@ onMounted(async() => {
 })
 </script>
 <template>
+	<div class="group fixed bottom-1/2 right-2 hover:scale-110 bg-transparent hover:bg-gray-200 hover:mr-3 text-right" icon="navigate_next">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:hidden">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+		</svg>
+		<ul class="hidden group-hover:block relative w-auto h-auto divide-dark-100 bg-dark-50"><li class="m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(pre)">{{ pre.company_name }}</li></ul></div>
+    <div class="group fixed bottom-1/2 left-1 hover:left-6 hover:scale-110 bg-transparent hover:bg-gray-200 shadow-dark-200">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:hidden">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+		</svg>
+		<span class="hidden group-hover:block m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(next)">{{ next.company_name }}</span></div>
+
 	<div class="bg-orange-100">
     	<Topbar />
 		<div class="w-full h-80 relative bg-contain" :style="'background-image: url('+ipo.header_img+')'">
@@ -634,4 +654,5 @@ onMounted(async() => {
   padding: 5px;
   text-align: left;
 }
+
 </style>
