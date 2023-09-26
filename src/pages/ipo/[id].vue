@@ -53,6 +53,7 @@ onMounted(async() => {
 	let prenext = await axios.get('https://droplet.netserve.in/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
 	pre.value = prenext.pre[prenext.pre.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	next.value = prenext.next[prenext.next.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
+	console.log(prenext)
 	brlms.value = JSON.parse(ipo.value?.brlms_json) ?? []
 	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
@@ -82,21 +83,21 @@ onMounted(async() => {
 					lots: 1,
 					shares: ipo.value.lot_size,
 					amt: amt,
-					app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0].quota / ipo.value.lot_size)
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 3)[0]?.quota / ipo.value.lot_size)
 				},
 				{
 					category: 'Small HNI',
 					lots: Math.ceil(200000 / amt),
 					shares: Math.ceil(200000 / amt) * ipo.value.lot_size,
 					amt:  Math.ceil(200000 / amt) * amt,
-					app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 8)[0]?.quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
 				},
 				{
 					category: 'Big HNI',
 					lots: Math.ceil(1000000 / amt),
 					shares: Math.ceil(1000000 / amt) * ipo.value.lot_size,
 					amt:  Math.ceil(1000000 / amt) * amt,
-					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0].quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
+					app: Math.round(quotas.value.filter(cat => cat.cat_id === 2)[0]?.quota / (Math.ceil(200000 / amt) * ipo.value.lot_size))
 				}
 			]
 		}
@@ -181,16 +182,18 @@ onMounted(async() => {
 })
 </script>
 <template>
-	<div class="group fixed bottom-1/2 right-2 hover:scale-110 bg-transparent hover:bg-gray-200 hover:mr-3 text-right" icon="navigate_next">
+	<div class="group fixed bottom-1/2 right-2 hover:scale-110 bg-transparent hover:bg-gray-200 hover:mr-3 text-right" icon="navigate_next" v-if="pre">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:hidden">
 		<path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
 		</svg>
-		<ul class="hidden group-hover:block relative w-auto h-auto divide-dark-100 bg-dark-50"><li class="m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(pre)">{{ pre.company_name }}</li></ul></div>
-    <div class="group fixed bottom-1/2 left-1 hover:left-6 hover:scale-110 bg-transparent hover:bg-gray-200 shadow-dark-200">
+		<span class="hidden group-hover:block m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(pre)">{{ pre?.company_name }}</span>
+	</div>
+    <div class="group fixed bottom-1/2 left-1 hover:left-6 hover:scale-110 bg-transparent hover:bg-gray-200 shadow-dark-200" v-if="next">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:hidden">
 		<path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
 		</svg>
-		<span class="hidden group-hover:block m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(next)">{{ next.company_name }}</span></div>
+		<span class="hidden group-hover:block m-2 border-dark-200 z-50 hover:text-blue-600 cursor-pointer" @click="goTo(next)">{{ next?.company_name }}</span>
+	</div>
 
 	<div class="bg-orange-100">
     	<Topbar />
