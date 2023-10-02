@@ -148,6 +148,7 @@ onMounted(async() => {
 		}
 	  }
 	  else console.log("Issue is not open yet")
+	  console.log(subscriptions.value)
 
 	  if(ipo.value.listings.length > 0 && ipo.value.listings[0].listing_date){
 		listing_data.value.bse = ipo.value.listings.filter(x => x.exchange === "BSE")[0]
@@ -371,8 +372,8 @@ onMounted(async() => {
 					<tbody>
 						<tr v-for="item in subs.items" :key="item.id">
 							<td class="border border-gray-400 p-2">{{ item.cat.short_name }}</td>
-							<td class="border border-gray-400 p-2">{{ item.subscription.toLocaleString('en-IN') }} </td>
-							<td class="border border-gray-400 p-2">{{ (item.subscription / item.quota).toFixed(2) }}x</td>
+							<td class="border border-gray-400 p-2">{{ (item.subscription !== null) ? item.subscription.toLocaleString('en-IN') : 'NA' }} </td>
+							<td class="border border-gray-400 p-2">{{ (item.subscription !== null) ? (item.subscription / item?.quota).toFixed(2)+'x' : 'NA' }}</td>
 						</tr>
 						<tr>
 							<td class="border border-gray-400 p-2 font-bold">Total</td>
