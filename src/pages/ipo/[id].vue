@@ -123,7 +123,7 @@ onMounted(async() => {
 	}
 	// console.log(minInvstment.value)
 	  if(today >= new Date(ipo.value.open_date)){
-		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat&sort=day').then(r=>r.data)
 		if(logs.length > 0){
 			let subs = logs.reduce((group, item) => {
 			const key = item.day;
@@ -179,6 +179,8 @@ onMounted(async() => {
 		}
 	  }
 	  else console.log("the issue is not listed yet")
+
+	  console.log(activeTab.value)
 
 })
 </script>
