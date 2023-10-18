@@ -4,7 +4,7 @@ const props = defineProps(['id'])
 const clients = ref([])
 const getClients = async() => {
 	let res = await axios.get('https://droplet.netserve.in/comp-client?filter[ipoId][eq]='+props.id).then(r => r.data)
-	//console.log(res)
+	console.log(res)
 	clients.value = res
 }
 getClients()

@@ -63,18 +63,18 @@ const formatDate = (d) => {
 				</div>
 				<h3 class="text-xl font-bold font-['Lugrasimo'] text-orange-800">Brief Intro</h3>
 				<div class="editor" v-html="compInfo[0].brief_intro_html" />
-				<h3 class="text-xl font-sans font-bold mt-3 font-['Lugrasimo'] text-orange-800" v-if="compInfo[0].business_info">Business</h3>
+				<h3 class="text-xl font-bold mt-3 font-['Lugrasimo'] text-orange-800" v-if="compInfo[0].business_info">Business</h3>
 				<div class="editor" v-html="compInfo[0].business_info" />
 
 				<CompClients :id="props.id" />
-				<div v-if="compInfo[0].client_note">{{ compInfo[0].client_note }}</div>
+				<div v-if="compInfo[0].client_note">{{ compInfo[0].clients_note }}</div>
 
 				<CompHoldings :id="props.id" />
-				<div v-if="compInfo[0].holding_note">{{ compInfo[0].holding_note }}</div>
+				<div v-if="compInfo[0].holding_note">{{ compInfo[0].holdings_note }}</div>
 
 				<CompProperties :id="props.id" :note="compInfo[0].property_note" />
 
-				<CompLitigations :id="props.id" :note="compInfo[0].property_note" />
+				<CompLitigations :id="props.id" :note="compInfo[0].litigations_note" />
 			</div>
 		</div>
 	</div>

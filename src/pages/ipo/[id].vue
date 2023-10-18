@@ -155,7 +155,9 @@ onMounted(async() => {
 		listing_data.value.nse = ipo.value.listings.filter(x => x.exchange === "NSE")[0]
 		activeExch.value = (listing_data.value.nse) ? 'NSE' : 'BSE'
 		if(listing_data.value.nse?.scrip_code != null){
-			listing_data.value.nse.live = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+listing_data.value.nse.scrip_code.trim()).then(r => r.data)
+			let code = listing_data.value.nse?.scrip_code
+			let live = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+code).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+			listing_data.value.nse.live = JSON.parse(live)
 		}
 		/*
 		if(listing_data.value.bse?.scrip_code != null){
@@ -164,16 +166,16 @@ onMounted(async() => {
 		*/
 		//console.log(listing_data.value)
 		mcap.value.atListing = (listing_data.value.nse?.listing_price && ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * listing_data.value.nse?.listing_price / 10000000 ).toFixed(2) + 'Cr.' : 'NA'
-	  	mcap.value.current = (listing_data.value.nse?.live?.priceInfo.lastPrice && ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * listing_data.value.nse.live.priceInfo.lastPrice / 10000000 ).toFixed(2) + 'Cr.' : 'NA'
+	  	mcap.value.current = (listing_data.value.nse?.live?.lastPrice && ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * listing_data.value.nse.live.lastPrice / 10000000 ).toFixed(2) + 'Cr.' : 'NA'
 
-		if(listing_data.value.nse?.live?.priceInfo.lastPrice){
+		if(listing_data.value.nse?.live?.lastPrice){
 			let curDate = new Date()
 			let listingDate = new Date(ipo.value.listings[0].listing_date)
 			let duration = (curDate.getTime() - listingDate.getTime()) / (1000 * 3600 * 24 * 365)
-			let gain = Number(listing_data.value.nse?.live?.priceInfo.lastPrice) / Number(ipo.value.issue_price)
+			let gain = Number(listing_data.value.nse?.live?.lastPrice) / Number(ipo.value.issue_price)
 			retrn.value.cagr = (duration >= 1) ? ((Math.pow(gain, 1/duration) - 1)*100).toFixed(2) + '%' : 'NA'
-			retrn.value.preturn = ((Number(listing_data.value.nse?.live?.priceInfo.lastPrice) - Number(ipo.value.issue_price)) * 100 / Number(ipo.value.issue_price)).toFixed(2)
-			retrn.value.allotReturn = ((Number(listing_data.value.nse?.live?.priceInfo.lastPrice) - Number(ipo.value.issue_price)) * ipo.value.lot_size).toFixed(2)
+			retrn.value.preturn = ((Number(listing_data.value.nse?.live?.lastPrice) - Number(ipo.value.issue_price)) * 100 / Number(ipo.value.issue_price)).toFixed(2)
+			retrn.value.allotReturn = ((Number(listing_data.value.nse?.live?.lastPrice) - Number(ipo.value.issue_price)) * ipo.value.lot_size).toFixed(2)
 			retrn.value.listingDay = ((listing_data.value.nse?.listing_price - ipo.value.issue_price) * ipo.value.lot_size).toFixed(2)
 			retrn.value.listingDayPer = ((listing_data.value.nse?.listing_price - ipo.value.issue_price) * 100 / ipo.value.issue_price).toFixed(2)
 		}
@@ -210,7 +212,7 @@ onMounted(async() => {
 				<span class="text-base"><sub>{{ (ipo.ipo_type == 'SME') ? 'SME' : 'IPO' }}</sub></span>
 				<span class="mb-2 p-2"><a :href="ipo.company_url" target="_blank"><svg class="inline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 30 30">
 <path d="M 25.980469 2.9902344 A 1.0001 1.0001 0 0 0 25.869141 3 L 20 3 A 1.0001 1.0001 0 1 0 20 5 L 23.585938 5 L 13.292969 15.292969 A 1.0001 1.0001 0 1 0 14.707031 16.707031 L 25 6.4140625 L 25 10 A 1.0001 1.0001 0 1 0 27 10 L 27 4.1269531 A 1.0001 1.0001 0 0 0 25.980469 2.9902344 z M 6 7 C 4.9069372 7 4 7.9069372 4 9 L 4 24 C 4 25.093063 4.9069372 26 6 26 L 21 26 C 22.093063 26 23 25.093063 23 24 L 23 14 L 23 11.421875 L 21 13.421875 L 21 16 L 21 24 L 6 24 L 6 9 L 14 9 L 16 9 L 16.578125 9 L 18.578125 7 L 16 7 L 14 7 L 6 7 z"></path>
-</svg></a></span><span v-if="listing_data.nse && listing_data.nse.scrip_code != null">&#8377; {{ listing_data.nse?.live?.priceInfo.lastPrice }}</span><span v-else-if="listing_data.bse && listing_data.bse.scrip_code != null">&#8377; {{ listing_data.bse?.live?.CurrRate.LTP }}</span>
+</svg></a></span><span v-if="listing_data.nse && listing_data.nse.scrip_code != null">&#8377; {{ listing_data.nse?.live?.lastPrice }}</span><span v-else-if="listing_data.bse && listing_data.bse.scrip_code != null">&#8377; {{ listing_data.bse?.live?.CurrRate.LTP }}</span>
 			</h2>
 		</div>
 		<div class="bg-orange-200 p-2 pl-4">
@@ -492,39 +494,39 @@ onMounted(async() => {
          				<div class="flex justify-between border-b-2 border-gray-200 p-2">
          						<div>
          							<p class="text-gray-600">As on</p>
-         							<p class="text-base font-bold">{{ listing_data.nse?.live?.metadata.lastUpdateTime }}</p>
+         							<p class="text-base font-bold">{{ new Date().toLocaleDateString('en-IN') }}</p>
          						</div>
          						<div>
          							<p class="text-gray-600">Price</p>
-         							<p class="text-base font-bold">&#8377;{{ listing_data.nse?.live?.priceInfo.lastPrice }}</p>
+         							<p class="text-base font-bold">&#8377;{{ listing_data.nse?.live?.lastPrice }}</p>
          						</div>
          					</div>
 							<div class="mt-4 font-[Satisfy] italic text-green-500">Days Low and High</div>
          					<div class="flex justify-between mb-2">
          						<div>
-         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.intraDayHighLow.min }}</p>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.intraDayHighLow.min }}</p>
          						</div>
          						<div>
-         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.intraDayHighLow.max }}</p>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.intraDayHighLow.max }}</p>
          						</div>
          					</div>
-         					<div class="px-6 mb-4" v-if="listing_data.nse?.live?.priceInfo.intraDayHighLow.min">
-								<slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
+         					<div class="px-6 mb-4" v-if="listing_data.nse?.live?.intraDayHighLow.min">
+								<slider v-model="listing_data.nse.live.lastPrice" :min="+listing_data.nse.live.intraDayHighLow.min" :max="+listing_data.nse.live.intraDayHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
 								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.intraDayHighLow.min" :max="+listing_data.nse.live.priceInfo.intraDayHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 							 <div class="mt-11 border-t-2 border-gray-100 font-[Satisfy] italic text-green-500">52 Weeks Low and High</div>
          					<div class="flex justify-between mb-2">
          						<div>
-         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.weekHighLow.min }}</p>
-								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.priceInfo.weekHighLow.minDate }}</p>
+         						<p class="text-base">&#8377;{{ listing_data.nse?.live?.weekHighLow.min }}</p>
+								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.weekHighLow.minDate }}</p>
          						</div>
          						<div>
-								<p class="text-base">&#8377;{{ listing_data.nse?.live?.priceInfo.weekHighLow.max }}</p>
-								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.priceInfo.weekHighLow.maxDate }}</p>
+								<p class="text-base">&#8377;{{ listing_data.nse?.live?.weekHighLow.max }}</p>
+								<p class="text-base font-[Satisfy] italic">{{ listing_data.nse?.live?.weekHighLow.maxDate }}</p>
          						</div>
          					</div>
-         					<div class="px-6" v-if="listing_data.nse?.live?.priceInfo.weekHighLow.min">
-								<slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
+         					<div class="px-6" v-if="listing_data.nse?.live?.weekHighLow.min">
+								<slider v-model="listing_data.nse.live.lastPrice" :min="+listing_data.nse.live.weekHighLow.min" :max="+listing_data.nse.live.weekHighLow.max" color="#FB278D" track-color="#FEFEFE" tooltip :circleOffset='5' :circleGap='5' />
 								<!-- <Slider v-model="listing_data.nse.live.priceInfo.lastPrice" :min="+listing_data.nse.live.priceInfo.weekHighLow.min" :max="+listing_data.nse.live.priceInfo.weekHighLow.max" tooltipPosition="bottom" :format="{prefix: 'current: '}" disabled showTooltip="focus" /> -->
          					</div>
 						</div>
