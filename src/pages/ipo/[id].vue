@@ -21,6 +21,7 @@ const anchorModal = ref(false)
 const brlms = ref()
 const pre = ref({})
 const next = ref({})
+const bhav = ref()
 const goTo = (ipo) => {
 		router.push(ipo.ipo_id+'-'+encodeURIComponent(ipo.company_name))
 	}
@@ -48,13 +49,35 @@ const amtInCr = (amt) => {
   return roundedValue;
 }
 
+const isValidUrl = urlString => {
+	  	var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+	    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+	    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+	    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+	    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+	    '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+	  return !!urlPattern.test(urlString)
+	}
+
+
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
 	let prenext = await axios.get('https://droplet.netserve.in/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
 	pre.value = prenext.pre[prenext.pre.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	next.value = prenext.next[prenext.next.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	console.log(prenext)
-	brlms.value = JSON.parse(ipo.value?.brlms_json) ?? []
+
+	let brs = JSON.parse(ipo.value?.brlms_json) ?? []
+	let promises = brs.map(async br => {
+		try {
+			const r = await axios.get('https://droplet.netserve.in/brlms/' + br.id);
+			return r.data;
+		} catch (e) {
+			return null;
+		}
+	})
+	Promise.all(promises).then(data => brlms.value = data.filter(item => item !== null))
+
 	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 	totalOffer.value = total
@@ -184,6 +207,9 @@ onMounted(async() => {
 
 	  console.log(activeTab.value)
 
+	  let data = await axios.get('https://droplet.netserve.in/ipo/getbhav?code='+listing_data.value.nse?.scrip_code).then(r => r.data)
+		if(data) bhav.value = data[0]
+
 })
 </script>
 <template>
@@ -285,8 +311,8 @@ onMounted(async() => {
 			</table>
 			<div v-if="brlms.length > 0" class="mt-4">
 				<h3 class="text-xl font-semibold bg-gradient-to-r from-orange-600 to-blue-400 text-transparent bg-clip-text">BRLMS</h3>
-				<ul class="mt-2">
-					<li v-for="brlm in brlms" :key="brlm.id" class="border-b-1 border-orange-400">{{ brlm.name }}</li>
+				<ul class="mt-2 list-decimal list-inside">
+					<li v-for="brlm in brlms" :key="brlm.id" class="border-b-1 border-orange-400"><a v-if="isValidUrl(brlm.url)" :href="brlm.url" traget="_blank" class="text-blue-600 hover:font-bold">{{ brlm.name }}</a><span v-else>{{ brlm.name }}</span></li>
 				</ul>
 			</div>
 		</div>
@@ -585,7 +611,7 @@ onMounted(async() => {
 		<CompFinancials :content="JSON.parse(ipo.financials)" v-if="ipo.financials" />
 		<CompPeers :content="JSON.parse(ipo.peers)" v-if="ipo.peers" />
 		<compSwot :content="JSON.parse(ipo.swot)" v-if="ipo.swot" />
-
+		<Footer />
 
 </div>
 </template>

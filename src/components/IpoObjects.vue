@@ -16,7 +16,7 @@ const amtInCr = (amt) => {
 
 const getObjects = async() => {
 	objects.value = await axios.get('https://droplet.netserve.in/ipo-object?expand=title&filter[ipoId][eq]='+props.id).then(r => r.data)
-	//console.log(res)
+	//console.log(objects.value)
 }
 getObjects()
 </script>
@@ -24,20 +24,12 @@ getObjects()
 
 	<div v-if="objects.length > 0" class="border-r md:border-r-0 bg-orange-200 p-3 rounded-lg flex-1">
 	<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Objects of the IPO</h3>
+	<ol class="list-decimal pl-5">
+		<li v-for="obj in objects" :key="obj.id" class="border-b">
+			<div class="flex gap-2 m-2"><span class="px-5">{{ obj.title?.title }}<span class="block text-sm italic">{{ obj.details }}</span></span><span v-if="obj.amount && obj.amount > 0" class="font-bold">&#8377;{{ amtInCr(obj.amount) }}Cr.</span></div>
+		</li>
+	</ol>
 
-    <table class="table-fixed w-full border">
-		<thead class="bg-orange-200">
-		<tr class="border border-gray-100">
-			<th class="border border-gray-100 text-left p-2" style="width:70%">Purpose</th>
-			<th class="border border-gray-100 p-2">Amount</th>
-		</tr>
-		</thead>
-		<tr v-for="obj in objects" :key="obj.id">
-			<td class="border border-gray-100 p-2">{{ obj.title?.title }}<span class="block text-sm italic">{{ obj.details }}</span></td>
-			<td class="border border-gray-100 p-2">&#8377;{{ amtInCr(obj.amount) }} Cr.</td>
-		</tr>
-
-    </table>
 	</div>
 
 </template>

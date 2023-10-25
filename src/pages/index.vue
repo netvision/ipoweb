@@ -11,6 +11,7 @@
 	const ipos = ref([])
 	const search = ref('')
 	const searchedItems = ref()
+	const bhav = ref()
 	const doSearch = async() => {
 		if(search.value.length > 1){
 			try {
@@ -28,6 +29,8 @@
 	}
 	onMounted(async () => {
 		ipos.value = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name,ipo_type,company_logo&sort=-open_date&per-page=10').then(r => r.data)
+		let data = await axios.get('https://droplet.netserve.in/ipo/getbhav').then(r => r.data)
+		if(data) bhav.value = data[0]
 	})
 </script>
 
