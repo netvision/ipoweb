@@ -83,12 +83,12 @@ const formatDate = (d) => {
 .editor ol {
 	margin: 5px 10px 0 10px;
 	list-style: inside decimal;
-	@apply divide-blue-100 divide-y gap-5 text-justify;
+	@apply divide-blue-300 divide-y gap-5 text-justify;
 }
 .editor ul {
 	margin-left: 10px;
 	list-style: inside disc;
-	@apply divide-blue-100 divide-y gap-9;
+	@apply divide-blue-300 divide-y gap-9;
 }
 
 </style>

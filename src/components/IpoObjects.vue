@@ -26,7 +26,7 @@ getObjects()
 	<h3 class="text-lg font-['Lugrasimo'] text-orange-800 font-bold">Objects of the IPO</h3>
 	<ol class="list-decimal pl-5">
 		<li v-for="obj in objects" :key="obj.id" class="border-b">
-			<div class="flex gap-2 m-2"><span class="px-5">{{ obj.title?.title }}<span class="block text-sm italic">{{ obj.details }}</span></span><span v-if="obj.amount && obj.amount > 0" class="font-bold">&#8377;{{ amtInCr(obj.amount) }}Cr.</span></div>
+			<div class="flex gap-2 m-2"><span class="px-5">{{ obj.title?.title }}<span class="block text-sm italic">{{ obj.details }}</span></span><span v-if="obj.amount && obj.amount > 0" class="font-bold flex-grow justify-end text-right">&#8377;{{ amtInCr(obj.amount) }}Cr.</span></div>
 		</li>
 	</ol>
 
