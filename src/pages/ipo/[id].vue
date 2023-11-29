@@ -62,6 +62,7 @@ const isValidUrl = urlString => {
 
 onMounted(async() => {
 	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
+
 	let prenext = await axios.get('https://droplet.netserve.in/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
 	pre.value = prenext.pre[prenext.pre.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	next.value = prenext.next[prenext.next.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
