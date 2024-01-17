@@ -18,7 +18,7 @@ const getPromoters = async() => {
 			let pr = {name: promoter.name, type: promoter.type, photo: promoter.photo, description: promoter.description}
         	promoters.value.push(pr)
 
-			if(promoter.pre_offer_shares > 0 && promoter.post_offer_shares > 0) {
+			if(promoter.pre_offer_shares > 0) {
             	let holding = {name: promoter.name, preOffer: promoter.pre_offer_shares, prePercent: promoter.pre_offer_percentage, postOffer: promoter.post_offer_shares, postPercent: promoter.post_offer_percentage}
             	holdings.value.push(holding)
         	}
