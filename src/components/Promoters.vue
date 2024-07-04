@@ -4,7 +4,7 @@ const props = defineProps(['id'])
 const promoters = ref([])
 const holdings = ref([])
 const getPromoters = async() => {
-	let res = await axios.get('https://droplet.netserve.in/promoter?ipo_id='+props.id).then(r => r.data)
+	let res = await axios.get('https://api.ipoinbox.com/promoter?ipo_id='+props.id).then(r => r.data)
 	if(res.length > 0) {
 		var TotalpreOffer = 0
 		var TotalprePercent = 0

@@ -10,7 +10,7 @@ const totalCount = ref()
 const totalPages = ref()
 
 const getIpos = async(p) => {
-	let res = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name,ipo_type&sort=-open_date&per-page='+perPage.value+'&page='+p)
+	let res = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,company_name,ipo_type&sort=-open_date&per-page='+perPage.value+'&page='+p)
 	ipos.value = res.data
 	totalCount.value = res.headers['x-pagination-total-count']
 	perPage.value = res.headers['x-pagination-per-page']

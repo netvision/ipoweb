@@ -61,9 +61,9 @@ const isValidUrl = urlString => {
 
 
 onMounted(async() => {
-	ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
+	ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value+'?expand=registrar,sector,listings').then(r => r.data)
 
-	let prenext = await axios.get('https://droplet.netserve.in/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
+	let prenext = await axios.get('https://api.ipoinbox.com/ipo/prenext?d='+ipo.value.open_date).then(r => r.data)
 	pre.value = prenext.pre[prenext.pre.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	next.value = prenext.next[prenext.next.findIndex(x => x.ipo_id === ipo.value.ipo_id) + 1]
 	console.log(prenext)
@@ -71,7 +71,7 @@ onMounted(async() => {
 	let brs = JSON.parse(ipo.value?.brlms_json) ?? []
 	let promises = brs.map(async br => {
 		try {
-			const r = await axios.get('https://droplet.netserve.in/brlms/' + br.id);
+			const r = await axios.get('https://api.ipoinbox.com/brlms/' + br.id);
 			return r.data;
 		} catch (e) {
 			return null;
@@ -82,7 +82,7 @@ onMounted(async() => {
 	mcap.value.atIpo = (ipo.value.no_of_total_shares) ? (ipo.value.no_of_total_shares * ipo.value.price_band_high / 10000000).toFixed(2) + 'Cr' : 'NA'
 	let total = Number(ipo.value.fresh_issue) + Number(ipo.value.offer_for_sale)
 	totalOffer.value = total
-	let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
+	let res = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?expand=cat&ipo_id='+ipoId.value).then(r => r.data)
   	let net = res.reduce((acc, r) => {
        return ([4,5,7].includes(r.cat_id)) ? acc - r.quota : acc
     }, total)
@@ -147,7 +147,7 @@ onMounted(async() => {
 	}
 	// console.log(minInvstment.value)
 	  if(today >= new Date(ipo.value.open_date)){
-		let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat&sort=day').then(r=>r.data)
+		let logs = await axios.get('https://api.ipoinbox.com/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat&sort=day').then(r=>r.data)
 		if(logs.length > 0){
 			let subs = logs.reduce((group, item) => {
 			const key = item.day;
@@ -180,7 +180,7 @@ onMounted(async() => {
 		activeExch.value = (listing_data.value.nse) ? 'NSE' : 'BSE'
 		if(listing_data.value.nse?.scrip_code != null){
 			let code = listing_data.value.nse?.scrip_code
-			let live = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+code).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+			let live = await axios.get('https://api.ipoinbox.com/ipo/nselive?code='+code).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
 			listing_data.value.nse.live = JSON.parse(live)
 		}
 		/*
@@ -208,7 +208,7 @@ onMounted(async() => {
 
 	  console.log(activeTab.value)
 
-	  let data = await axios.get('https://droplet.netserve.in/ipo/getbhav?code='+listing_data.value.nse?.scrip_code).then(r => r.data)
+	  let data = await axios.get('https://api.ipoinbox.com/ipo/getbhav?code='+listing_data.value.nse?.scrip_code).then(r => r.data)
 		if(data) bhav.value = data[0]
 
 })

@@ -3,7 +3,7 @@
 	const props = defineProps(['id', 'note'])
 	const properties = ref([])
 	const getProperties = async() => {
-		let res = await axios.get('https://droplet.netserve.in/comp-property?expand=type0&filter[ipoId][eq]='+props.id).then(r => r.data)
+		let res = await axios.get('https://api.ipoinbox.com/comp-property?expand=type0&filter[ipoId][eq]='+props.id).then(r => r.data)
 		console.log(res)
 		properties.value = res.reduce((group, item) => {
 		const key = item.type0.title;

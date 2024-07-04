@@ -13,7 +13,7 @@ const amtInCr = (amt) => {
   return roundedValue;
 }
 onMounted(() =>{
-	axios.get("https://droplet.netserve.in/ipo-anchor?ipo_id="+props.ipo_id+"&expand=anchor").then(r => {
+	axios.get("https://api.ipoinbox.com/ipo-anchor?ipo_id="+props.ipo_id+"&expand=anchor").then(r => {
 		anchors.value = r.data.map(a => ({
 			...a,
 			perc: (a.no_of_equity_shares * 100 / props.quota).toFixed(2) + '%',

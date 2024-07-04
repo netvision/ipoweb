@@ -4,7 +4,7 @@ import IpoObjects from './IpoObjects.vue';
 const props = defineProps(['id'])
 const compInfo = ref()
 const getInfo = async() => {
-	let info = await axios.get('https://droplet.netserve.in/comp-info?filter[ipoId][eq]='+props.id).then(r => r.data)
+	let info = await axios.get('https://api.ipoinbox.com/comp-info?filter[ipoId][eq]='+props.id).then(r => r.data)
 	//console.log(info)
 	compInfo.value = info
 }

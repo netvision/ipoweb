@@ -3,7 +3,7 @@ import axios from 'axios'
 const props = defineProps(['id'])
 const clients = ref([])
 const getClients = async() => {
-	let res = await axios.get('https://droplet.netserve.in/comp-client?filter[ipoId][eq]='+props.id).then(r => r.data)
+	let res = await axios.get('https://api.ipoinbox.com/comp-client?filter[ipoId][eq]='+props.id).then(r => r.data)
 	console.log(res)
 	clients.value = res
 }

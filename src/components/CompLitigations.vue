@@ -3,7 +3,7 @@
 	const props = defineProps(['id', 'note'])
 	const litigations = ref([])
 	const getLitigations = async() => {
-		let res = await axios.get('https://droplet.netserve.in/comp-litigation?expand=type&filter[ipoId][eq]='+props.id).then(r => r.data)
+		let res = await axios.get('https://api.ipoinbox.com/comp-litigation?expand=type&filter[ipoId][eq]='+props.id).then(r => r.data)
 		console.log(res)
 		litigations.value = res.reduce((group, item) => {
 		const key = item.type.title;

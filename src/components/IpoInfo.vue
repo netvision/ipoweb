@@ -4,7 +4,7 @@
 	const ipo = ref({})
 
 	onMounted(async() => {
-		ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+props.id).then(r => r.data)
+		ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+props.id).then(r => r.data)
 	})
 </script>
 <template>

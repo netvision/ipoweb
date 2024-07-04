@@ -3,7 +3,7 @@ import axios from 'axios'
 const props = defineProps(['id'])
 const events = ref([])
 const getEvents = async() => {
-	let res = await axios.get('https://droplet.netserve.in/comp-history?filter[ipoId][eq]='+props.id).then(r => r.data)
+	let res = await axios.get('https://api.ipoinbox.com/comp-history?filter[ipoId][eq]='+props.id).then(r => r.data)
 	console.log(res)
 	events.value = res.reduce((group, item) => {
 		const key = item.year;

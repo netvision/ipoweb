@@ -15,7 +15,7 @@ const amtInCr = (amt) => {
 }
 
 const getObjects = async() => {
-	objects.value = await axios.get('https://droplet.netserve.in/ipo-object?expand=title&filter[ipoId][eq]='+props.id).then(r => r.data)
+	objects.value = await axios.get('https://api.ipoinbox.com/ipo-object?expand=title&filter[ipoId][eq]='+props.id).then(r => r.data)
 	//console.log(objects.value)
 }
 getObjects()

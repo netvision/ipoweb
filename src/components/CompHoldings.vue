@@ -3,7 +3,7 @@ import axios from 'axios'
 const props = defineProps(['id'])
 const holdings = ref([])
 onMounted(async() => {
-	let res = await axios.get('https://droplet.netserve.in/comp-holding?filter[ipoId][eq]='+props.id).then(r => r.data)
+	let res = await axios.get('https://api.ipoinbox.com/comp-holding?filter[ipoId][eq]='+props.id).then(r => r.data)
 	holdings.value = res.reduce((group, item) => {
 		const key = item.holding_type;
 		if(!group[key]){

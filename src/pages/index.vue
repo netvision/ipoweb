@@ -15,7 +15,7 @@
 	const doSearch = async() => {
 		if(search.value.length > 1){
 			try {
-				let res = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name&filter[company_name][like]='+search.value).then(r => r.data)
+				let res = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,company_name&filter[company_name][like]='+search.value).then(r => r.data)
 				searchedItems.value = res
 			}
 			catch(e){
@@ -28,8 +28,8 @@
 		router.push('ipo/'+ipo.ipo_id+'-'+encodeURIComponent(ipo.company_name))
 	}
 	onMounted(async () => {
-		ipos.value = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name,ipo_type,company_logo&sort=-open_date&per-page=10').then(r => r.data)
-		let data = await axios.get('https://droplet.netserve.in/ipo/getbhav').then(r => r.data)
+		ipos.value = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,company_name,ipo_type,company_logo&sort=-open_date&per-page=10').then(r => r.data)
+		let data = await axios.get('https://api.ipoinbox.com/ipo/getbhav').then(r => r.data)
 		if(data) bhav.value = data[0]
 	})
 </script>
