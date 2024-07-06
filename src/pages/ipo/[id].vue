@@ -230,9 +230,9 @@ onMounted(async() => {
 
 	<div class="bg-orange-100">
     	<Topbar />
-		<div class="w-full h-80 relative bg-contain" :style="'background-image: url('+ipo.header_img+')'">
+		<div class="w-full h-80 relative bg-contain" :style="'background-image: url(https://api.ipoinbox.com/'+ipo.header_img+')'">
 			<div class="absolute inset-0 flex items-center justify-center">
-				<img :src="ipo.company_logo" class="h-20 object-contain bg-white drop-shadow-lg" />
+				<img :src="'https://api.ipoinbox.com/'+ipo.company_logo" class="h-20 object-contain bg-white drop-shadow-lg" />
 			</div>
 		</div>
 		<div class="bg-orange-300 p-4 align-middle">
