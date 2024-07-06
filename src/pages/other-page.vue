@@ -7,19 +7,20 @@ useHead({
 const data = ref([])
 
 const update = async(d) => {
-	const res = await axios.patch('https://api.ipoinbox.com/ipos/'+d.ipo_id, {anchors_pdf: d.new_anchor})
+	const res = await axios.patch('https://api.ipoinbox.com/promoters/'+d.id, {photo: d.new_photo})
+	console.log(res.data)
 	if(res.status === 200){
 		data.value.splice(data.value.findIndex(obj => obj.ipo_id === d.ipo_id), 1);
 	}
 }
 
 onMounted(async() =>{
-	const res = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,anchors_pdf').then(r => r.data)
-	data.value = res.filter(obj => obj.anchors_pdf !== null && obj.anchors_pdf.includes('https://')).map(obj => {
+	const res = await axios.get('https://api.ipoinbox.com/promoters?fields=id,photo').then(r => r.data)
+	data.value = res.filter(obj => obj.photo !== null && obj.photo.includes('https://')).map(obj => {
 
 		return {
 			...obj,
-			new_anchor: obj.anchors_pdf.replace('https://droplet.netserve.in/','')
+			new_photo: obj.photo.replace('https://droplet.netserve.in/','https://api.ipoinbox.com/')
 		}
 	})
 })
